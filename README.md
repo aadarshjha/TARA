@@ -2,6 +2,8 @@
 
 CS 8395 Final Project
 
+> A fully-integrated, end-to-end visualization and analysis application to ascertain preliminary quantification of medical imaging data, in an intuitive and abstracted manner so as to be used by a wide audience, regardless of pre-existing knowledge with respect to medical imaging. 
+
 Aadarsh Jha, Ashwin Kumar, Terry Luo, Raahul Natarrajan
 
 ## I. Background Information
