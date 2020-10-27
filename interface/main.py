@@ -21,5 +21,7 @@ class Application(tk.Frame):
         print("hi there, everyone!")
 
 root = tk.Tk()
+root.geometry("1020x700")
+root.resizable(False, False)
 app = Application(master=root)
 app.mainloop()
