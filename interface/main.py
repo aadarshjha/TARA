@@ -78,8 +78,6 @@ class Application(tk.Frame):
                            command=self.create_vtk_view)
         button.pack(side=tk.LEFT)
 
-
-
 def callback(event):
     print("clicked at", event.x, event.y)
 
