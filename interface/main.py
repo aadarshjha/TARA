@@ -9,6 +9,8 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMainWindow.__init__(self, parent)
  
         self.frame = QtWidgets.QFrame()
+        self.setFixedHeight(520)
+        self.setFixedWidth(900)
  
         self.main_layout = QtWidgets.QHBoxLayout()
 
