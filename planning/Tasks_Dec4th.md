@@ -14,10 +14,10 @@
 
 ## Deadlines 
 
-1. Code done <br> Sunday </br>. 
-2. Video done <br> Monday </br>.
-3. Report done <br> Tuesday </br>.
-4. Submit <br> Wednesday Night </br>.
+1. Code done <strong> Sunday </strong>. 
+2. Video done <strong> Monday </strong>.
+3. Report done <strong> Tuesday </strong>.
+4. Submit <strong> Wednesday Night </strong>.
  
 ## Raahul And Aadarsh 
 1. Pass the image to the filtering code that is written (ITK) code. 
