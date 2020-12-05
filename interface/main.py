@@ -36,6 +36,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.vtkWidget.GetRenderWindow().AddRenderer(ren)
         self.iren = self.vtkWidget.GetRenderWindow().GetInteractor()
  
+        style = vtk.vtkInteractorStyleImage()
+        style.SetInteractionModeToImage3D()
+        self.iren.SetInteractorStyle(style)
+
         ren.ResetCamera()
  
         self.frame.setLayout(self.main_layout)
@@ -64,35 +68,96 @@ class MainWindow(QtWidgets.QMainWindow):
         reader.SetFileName(file_name)
         reader.Update()
 
-        scalarRange = reader.GetOutput().GetScalarRange()
-        extent = reader.GetOutput().GetExtent()
-        viewport = [[0.67, 0.0, 1.0, 0.5],
-                    [0.67, 0.5, 1.0, 1.0],
-                    [0.0, 0.0, 0.67, 1.0]]
+        matrix = vtk.vtkMatrix4x4()
 
-        for ren in self.renderers:
-            self.vtkWidget.GetRenderWindow().RemoveRenderer(ren)
+        if (reader.GetQFormMatrix()):
+            matrix.DeepCopy(reader.GetQFormMatrix())
+            matrix.Invert()
+        elif (reader.GetSFormMatrix()):
+            matrix.DeepCopy(reader.GetSFormMatrix())
+            matrix.Invert()
 
-        for i in range(3):
-            mapper = vtk.vtkImageSliceMapper()
-            mapper.SetInputConnection(reader.GetOutputPort())
-            mapper.SetOrientation(i % 3)
-            mapper.SliceAtFocalPointOn()
+        reslice = vtk.vtkImageReslice()
+        reslice.SetInputConnection(reader.GetOutputPort())
+        reslice.SetResliceAxes(matrix)
+        reslice.SetInterpolationModeToLinear()
+        reslice.Update()
+
+        scalarRange = [0.0, 0.0]
+        extent = [0, 0, 0, 0, 0, 0]
+        scalarRange = reslice.GetOutput().GetScalarRange()
+        extent = reslice.GetOutput().GetExtent()
+
+        # viewport = [
+        #     [ 0.67, 0.0, 1.0, 0.5 ],
+        #     [ 0.67, 0.5, 1.0, 1.0 ],
+        #     [ 0.0, 0.0, 0.67, 1.0 ],
+        # ]
+
+        viewport = [[0.0, 0.0, 0.33, 1.0],
+                    [0.33, 0.0, 0.67, 1.0],
+                    [0.67, 0.0, 1.0, 1.0]]
+
+        imageIs3D = (extent[5] > extent[4])
+
+        for i in range(2 * (imageIs3D == 0), 3):
+            imageMapper = vtk.vtkImageSliceMapper()
+
+            if (i < 3):
+                imageMapper.SetInputConnection(reslice.GetOutputPort())
+
+            imageMapper.SetOrientation(i % 3)
+            imageMapper.SliceAtFocalPointOn()
 
             image = vtk.vtkImageSlice()
-            image.SetMapper(mapper)
+            image.SetMapper(imageMapper)
+
             image.GetProperty().SetColorWindow(scalarRange[1] - scalarRange[0])
-            image.GetProperty().SetColorLevel(0.5 * (scalarRange[0] + scalarRange[1]))
+            image.GetProperty().SetColorLevel(0.5*(scalarRange[0] + scalarRange[1]))
+            image.GetProperty().SetInterpolationTypeToNearest()
 
             renderer = vtk.vtkRenderer()
-            renderer.AddActor(image)
-            renderer.SetBackground(0, 0, 0)
-            self.vtkWidget.GetRenderWindow().AddRenderer(renderer)
             self.renderers.append(renderer)
 
-            
+            renderer.AddViewProp(image)
+            renderer.SetBackground(0.0, 0.0, 0.0)
+            if imageIs3D:
+                renderer.SetViewport(viewport[i])
 
-        self.iren.Initialize()
+            renWin = self.vtkWidget.GetRenderWindow()
+            renWin.AddRenderer(renderer)
+
+            bounds = imageMapper.GetBounds()
+            point = [0,0,0]
+            point[0] = 0.5*(bounds[0] + bounds[1])
+            point[1] = 0.5*(bounds[2] + bounds[3])
+            point[2] = 0.5*(bounds[4] + bounds[5])
+            maxdim = 0.0
+
+            for j in range(3):
+                s = 0.5*(bounds[2*j+1] - bounds[2*j])
+                maxdim = s if s > maxdim else maxdim
+
+            camera = renderer.GetActiveCamera()
+            camera.SetFocalPoint(point)
+            if imageMapper.GetOrientation() == 2:
+                point[imageMapper.GetOrientation()] -= 500.0
+                camera.SetViewUp(0.0, +1.0, 0.0)
+            else:
+                point[imageMapper.GetOrientation()] += 500.0
+                camera.SetViewUp(0.0, 0.0, +1.0)
+
+            camera.SetPosition(point)
+            camera.ParallelProjectionOn()
+            camera.SetParallelScale(maxdim)
+
+        if (imageIs3D):
+            renWin.SetSize(850, 500)
+        else:
+            renWin.SetSize(400, 400)
+
+        renWin.Render()
+        self.iren.Start()
 
 if __name__ == "__main__":
  
