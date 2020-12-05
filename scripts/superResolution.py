@@ -2,7 +2,7 @@
 Input Params: Data file name
 Output Params: Result File name
 File Description: MRI Super Resolution
-Ex Input: brainExtraction.py 1000_3.nii.gz 1000_3_superResolution.nii.gz
+Ex Input: superResolution.py 1000_3.nii.gz 1000_3_superResolution.nii.gz
 '''
 
 import sys
