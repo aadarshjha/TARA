@@ -2,7 +2,7 @@
 Input Params: FixedImage, MovingImage, transform
 Output Params: Result File name
 File Description: Perform registration through ANTS
-Ex Input: brainExtraction.py SubjectB_T1.nrrd SubjectA_T1.nrrd SubjectA2B_Syn.nii.gz Affine
+Ex Input: registration.py SubjectB_T1.nrrd SubjectA_T1.nrrd SubjectA2B_Syn.nii.gz Affine
 '''
 
 import sys

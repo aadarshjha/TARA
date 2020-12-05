@@ -2,7 +2,7 @@
 Input Params: Data file name
 Output Params: Result File name
 File Description: Perform Atropos-style six tissue segmentation using deep learning.
-Ex Input: brainExtraction.py SubjectA_T1.nrrd SubjectA_T1_deepAtroposSegmentation.nrrd
+Ex Input: deepAtropos.py SubjectA_T1.nrrd SubjectA_T1_deepAtroposSegmentation.nrrd
 SubjectA_T1_deepAtroposBackground.nrrd SubjectA_T1_deepAtroposCSF.nrrd SubjectA_T1_deepAtroposGM.nrrd
 SubjectA_T1_deepAtroposWM.nrrd SubjectA_T1_deepAtroposDeepGM.nrrd SubjectA_T1_deepAtroposBrainStem.nrrd
 SubjectA_T1_deepAtroposCerebellum.nrrd
