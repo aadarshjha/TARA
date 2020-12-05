@@ -26,13 +26,11 @@ insideValue = int(sys.argv[6])
 reader = itk.ImageFileReader.New(FileName=inputImage)
 
 #Create threshold filter
-thresholdFilter = itk.BinaryThresholdImageFilter.New(Input=reader.GetOutput())
-
-#Perform the binary threshold
-thresholdFilter.SetLowerThreshold(lowerThreshold)
-thresholdFilter.SetUpperThreshold(upperThreshold)
-thresholdFilter.SetOutsideValue(outsideValue)
-thresholdFilter.SetInsideValue(insideValue)
+thresholdFilter = itk.BinaryThresholdImageFilter.New(Input=reader.GetOutput(),
+                                                     LowerThreshold=lowerThreshold,
+                                                     UpperThreshold=upperThreshold,
+                                                     OutsideValue=outsideValue,
+                                                     InsideValue=insideValue)
 
 #Write the file to an output image
 writer = itk.ImageFileWriter.New(FileName=outputImage, Input=thresholdFilter.GetOutput())

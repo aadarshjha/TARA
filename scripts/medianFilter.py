@@ -1,5 +1,5 @@
 '''
-Input Params: Data file name, lower Threshold, upper Threshold, outside Value, inside Value
+Input Params: Data file name, radius
 Output Params: Result File name
 File Description: Median Filter on input image with given radius
 Ex Input: medianFilter.py 1000_3.nii.gz 1000_3_medianFilter.nii.gz 5
@@ -22,8 +22,7 @@ radius = int(sys.argv[3])
 reader = itk.ImageFileReader.New(FileName=inputImage)
 
 #Create median filter and perform filtering
-medianFilter = itk.MedianImageFilter.New(Input=reader.GetOutput())
-medianFilter.SetRadius(radius)
+medianFilter = itk.MedianImageFilter.New(Input=reader.GetOutput(), Radius=radius)
 
 #Write the file to an output image
 writer = itk.ImageFileWriter.New(FileName=outputImage, Input=medianFilter.GetOutput())
