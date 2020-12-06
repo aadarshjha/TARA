@@ -7,41 +7,46 @@ Ex Input: medianFilter.py 1000_3.nii.gz 1000_3_erosion.nii.gz 5
 import sys
 import itk
 
-#Make sure input is selected
-if len(sys.argv) != 4:
-    print("Usage: " + sys.argv[0] + " <inputImage> <outputImage> <radius>")
-    sys.exit(1)
+
+def arg_func(args):
+    #Make sure input is selected
+    if len(sys.argv) != 4:
+        print("Usage: " + sys.argv[0] + " <inputImage> <outputImage> <radius>")
+        sys.exit(1)
 
 
-#Inputting the variables
-inputImage = "../data/input" + sys.argv[1]
-outputImage = "../data/results" + sys.argv[2]
-radius = int(sys.argv[3])
+    #Inputting the variables
+    inputImage = "../data/input" + sys.argv[1]
+    outputImage = "../data/results" + sys.argv[2]
+    radius = int(sys.argv[3])
 
-PixelType = itk.UC
-dims = 3
+    PixelType = itk.UC
+    dims = 3
 
-ImageType = itk.Image[PixelType, dims]
+    ImageType = itk.Image[PixelType, dims]
 
-#set up a reader
-ReaderType = itk.ImageFileReader[ImageType]
-reader = ReaderType.New()
-reader.SetFileName(inputImage)
+    #set up a reader
+    ReaderType = itk.ImageFileReader[ImageType]
+    reader = ReaderType.New()
+    reader.SetFileName(inputImage)
 
-#set kernal shape
-StructuringElementType = itk.FlatStructuringElement[dims]
-structuringElement = StructuringElementType.Ball(radiusValue)
+    #set kernal shape
+    StructuringElementType = itk.FlatStructuringElement[dims]
+    structuringElement = StructuringElementType.Ball(radiusValue)
 
-#create dilation filter
-DilateFilterType = itk.BinaryDilateImageFilter[ImageType,
-                                               ImageType,
-                                               StructuringElementType]
-dilateFilter = DilateFilterType.New()
-dilateFilter.SetInput(reader.GetOutput())
-dilateFilter.SetKernel(structuringElement)
-dilateFilter.SetForegroundValue(255)
+    #create dilation filter
+    DilateFilterType = itk.BinaryDilateImageFilter[ImageType,
+                                                   ImageType,
+                                                   StructuringElementType]
+    dilateFilter = DilateFilterType.New()
+    dilateFilter.SetInput(reader.GetOutput())
+    dilateFilter.SetKernel(structuringElement)
+    dilateFilter.SetForegroundValue(255)
 
-WriterType = itk.ImageFileWriter[ImageType]
-writer = WriterType.New(FileName=outputImage, Input=dilateFilter.GetOutput())
+    WriterType = itk.ImageFileWriter[ImageType]
+    writer = WriterType.New(FileName=outputImage, Input=dilateFilter.GetOutput())
 
-writer.Update()
+    writer.Update()
+
+if __name__ == '__main__':
+    arg_func(sys.argv)
