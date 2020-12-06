@@ -11,15 +11,15 @@ import ants
 
 def arg_func(args):
     #Make sure input is selected
-    if len(sys.argv) != 6:
-        print("Usage: " + sys.argv[0] + " <inputImage> <outputImage> <outputImage> <outputImage> <outputImage>")
+    if len(args) != 6:
+        print("Usage: " + args[0] + " <inputImage> <outputImage> <outputImage> <outputImage> <outputImage>")
         sys.exit(1)
 
-    inputImage = sys.argv[1]
-    segmentationOutput = sys.argv[2]
-    CSFOutput = sys.argv[3]
-    GMOutput = sys.argv[4]
-    WMOutput = sys.argv[5]
+    inputImage = args[1]
+    segmentationOutput = args[2]
+    CSFOutput = args[3]
+    GMOutput = args[4]
+    WMOutput = args[5]
 
     img = ants.image_read(inputImage)
     mask = ants.get_mask(img)
