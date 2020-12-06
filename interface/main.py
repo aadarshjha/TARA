@@ -243,6 +243,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Ex Input: binaryThreshold.py 1000_3.nii.gz 1000_3_threshold.nii.gz 600 1500 0 1
         # according to ashwin. 
 
+<<<<<<< HEAD
         ## clearing the view: 
         for layout in self.h_view_arr:
             while layout.count():
@@ -258,6 +259,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.h_view_arr = []
         self.label_arr = []
         self.input_arr = []
+=======
+        ## clearing the view:
+        print(self.sub_menu_options.count()) 
+        while self.sub_menu_options.count(): 
+            child = self.sub_menu_options.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+            elif child.layout(): 
+                nestedLayout = child
+                while nestedLayout.count(): 
+                    sub_child = nestedLayout.takeAt(0); 
+                    sub_child.widget().deleteLater(); 
+>>>>>>> 8102af7a11160d08e14eaa07c706e9124f869efe
 
         if type == "Binary Threshold":
             self.button3 = QtWidgets.QPushButton('Run Binary Threshold', self); 
