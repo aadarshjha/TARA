@@ -320,79 +320,82 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.input_arr[0].text(), self.input_arr[1].text(), 
                     self.input_arr[2].text(), self.input_arr[3].text()))
             self.sub_menu_options.addWidget(self.run_button)
+
+
+        #### EXPERIMENTAL #### CONSIDER REMOVING ####
             
-        elif type == "Brain Extraction":
-            self.text_arr = ['Output:']
-            self.default_arr = ['../data/results/SubjectA_T1_brainExtraction.nii.gz']
+        # elif type == "Brain Extraction":
+        #     self.text_arr = ['Output:']
+        #     self.default_arr = ['../data/results/SubjectA_T1_brainExtraction.nii.gz']
 
-            for i in range(len(self.text_arr)):
-                self.h_view_arr.append(QtWidgets.QHBoxLayout())
-                self.label_arr.append(QLabel(self))
-                self.label_arr[i].setText(self.text_arr[i])
-                self.input_arr.append(QLineEdit(self.default_arr[i]))
-                self.h_view_arr[i].addWidget(self.label_arr[i])
-                self.h_view_arr[i].addWidget(self.input_arr[i])
-                self.sub_menu_options.addLayout(self.h_view_arr[i])
-
-
-            self.run_button = QtWidgets.QPushButton('Run Brain Extraction', self); 
-            self.run_button.clicked.connect(
-                lambda: self.getBrainExtraction(self.input_file_name,  
-                    self.input_arr[0].text()))
-            self.sub_menu_options.addWidget(self.run_button)
-
-        elif type == "Deep Segmentation":
-            self.text_arr = ['Segmentation Output:', 'Background Output:', 
-                            'CSF Output:', 'GM Output:', 'WM Output:', 
-                            'Deep GM Output:', 'Brain Stem Output:',
-                            'Cerebellum Output:']
-            self.default_arr = ['../data/results/1000_3_deepAtropos.nii.gz',
-                                '../data/results/1000_3_deepAtroposBackground.nii.gz',
-                                '../data/results/1000_3_deepAtroposCSF.nii.gz',
-                                '../data/results/1000_3_deepAtroposGM.nii.gz',
-                                '../data/results/1000_3_deepAtroposWM.nii.gz',
-                                '../data/results/1000_3_deepAtroposDeepGM.nii.gz',
-                                '../data/results/1000_3_deepAtroposBrainStem.nii.gz',
-                                '../data/results/1000_3_deepAtroposCerebellum.nii.gz',]
-
-            for i in range(len(self.text_arr)):
-                self.h_view_arr.append(QtWidgets.QHBoxLayout())
-                self.label_arr.append(QLabel(self))
-                self.label_arr[i].setText(self.text_arr[i])
-                self.input_arr.append(QLineEdit(self.default_arr[i]))
-                self.h_view_arr[i].addWidget(self.label_arr[i])
-                self.h_view_arr[i].addWidget(self.input_arr[i])
-                self.sub_menu_options.addLayout(self.h_view_arr[i])
+        #     for i in range(len(self.text_arr)):
+        #         self.h_view_arr.append(QtWidgets.QHBoxLayout())
+        #         self.label_arr.append(QLabel(self))
+        #         self.label_arr[i].setText(self.text_arr[i])
+        #         self.input_arr.append(QLineEdit(self.default_arr[i]))
+        #         self.h_view_arr[i].addWidget(self.label_arr[i])
+        #         self.h_view_arr[i].addWidget(self.input_arr[i])
+        #         self.sub_menu_options.addLayout(self.h_view_arr[i])
 
 
-            self.run_button = QtWidgets.QPushButton('Run Atropos 6-tissue', self); 
-            self.run_button.clicked.connect(
-                lambda: self.getDeepAtropos(self.input_file_name,  
-                    self.input_arr[0].text(), self.input_arr[1].text(), 
-                    self.input_arr[2].text(), self.input_arr[3].text(),
-                    self.input_arr[4].text(), self.input_arr[5].text(),
-                    self.input_arr[6].text(), self.input_arr[7].text()))
-            self.sub_menu_options.addWidget(self.run_button)
+        #     self.run_button = QtWidgets.QPushButton('Run Brain Extraction', self); 
+        #     self.run_button.clicked.connect(
+        #         lambda: self.getBrainExtraction(self.input_file_name,  
+        #             self.input_arr[0].text()))
+        #     self.sub_menu_options.addWidget(self.run_button)
 
-        elif type == "Super Resolution":
-            self.text_arr = ['Output:']
-            self.default_arr = ['../data/results/1000_3_superres.nii.gz']
+        # elif type == "Deep Segmentation":
+        #     self.text_arr = ['Segmentation Output:', 'Background Output:', 
+        #                     'CSF Output:', 'GM Output:', 'WM Output:', 
+        #                     'Deep GM Output:', 'Brain Stem Output:',
+        #                     'Cerebellum Output:']
+        #     self.default_arr = ['../data/results/1000_3_deepAtropos.nii.gz',
+        #                         '../data/results/1000_3_deepAtroposBackground.nii.gz',
+        #                         '../data/results/1000_3_deepAtroposCSF.nii.gz',
+        #                         '../data/results/1000_3_deepAtroposGM.nii.gz',
+        #                         '../data/results/1000_3_deepAtroposWM.nii.gz',
+        #                         '../data/results/1000_3_deepAtroposDeepGM.nii.gz',
+        #                         '../data/results/1000_3_deepAtroposBrainStem.nii.gz',
+        #                         '../data/results/1000_3_deepAtroposCerebellum.nii.gz',]
 
-            for i in range(len(self.text_arr)):
-                self.h_view_arr.append(QtWidgets.QHBoxLayout())
-                self.label_arr.append(QLabel(self))
-                self.label_arr[i].setText(self.text_arr[i])
-                self.input_arr.append(QLineEdit(self.default_arr[i]))
-                self.h_view_arr[i].addWidget(self.label_arr[i])
-                self.h_view_arr[i].addWidget(self.input_arr[i])
-                self.sub_menu_options.addLayout(self.h_view_arr[i])
+        #     for i in range(len(self.text_arr)):
+        #         self.h_view_arr.append(QtWidgets.QHBoxLayout())
+        #         self.label_arr.append(QLabel(self))
+        #         self.label_arr[i].setText(self.text_arr[i])
+        #         self.input_arr.append(QLineEdit(self.default_arr[i]))
+        #         self.h_view_arr[i].addWidget(self.label_arr[i])
+        #         self.h_view_arr[i].addWidget(self.input_arr[i])
+        #         self.sub_menu_options.addLayout(self.h_view_arr[i])
 
 
-            self.run_button = QtWidgets.QPushButton('Run Super Resolution', self); 
-            self.run_button.clicked.connect(
-                lambda: self.getSuperRes(self.input_file_name,  
-                    self.input_arr[0].text()))
-            self.sub_menu_options.addWidget(self.run_button)
+        #     self.run_button = QtWidgets.QPushButton('Run Atropos 6-tissue', self); 
+        #     self.run_button.clicked.connect(
+        #         lambda: self.getDeepAtropos(self.input_file_name,  
+        #             self.input_arr[0].text(), self.input_arr[1].text(), 
+        #             self.input_arr[2].text(), self.input_arr[3].text(),
+        #             self.input_arr[4].text(), self.input_arr[5].text(),
+        #             self.input_arr[6].text(), self.input_arr[7].text()))
+        #     self.sub_menu_options.addWidget(self.run_button)
+
+        # elif type == "Super Resolution":
+        #     self.text_arr = ['Output:']
+        #     self.default_arr = ['../data/results/1000_3_superres.nii.gz']
+
+        #     for i in range(len(self.text_arr)):
+        #         self.h_view_arr.append(QtWidgets.QHBoxLayout())
+        #         self.label_arr.append(QLabel(self))
+        #         self.label_arr[i].setText(self.text_arr[i])
+        #         self.input_arr.append(QLineEdit(self.default_arr[i]))
+        #         self.h_view_arr[i].addWidget(self.label_arr[i])
+        #         self.h_view_arr[i].addWidget(self.input_arr[i])
+        #         self.sub_menu_options.addLayout(self.h_view_arr[i])
+
+
+        #     self.run_button = QtWidgets.QPushButton('Run Super Resolution', self); 
+        #     self.run_button.clicked.connect(
+        #         lambda: self.getSuperRes(self.input_file_name,  
+        #             self.input_arr[0].text()))
+        #     self.sub_menu_options.addWidget(self.run_button)
         
 
         return type 
