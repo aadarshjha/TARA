@@ -285,15 +285,27 @@ class MainWindow(QtWidgets.QMainWindow):
 
         
         elif type == "Canny Edge Detection":
-            self.button1 = QtWidgets.QPushButton('Open TESTS', self)
-            self.button2 = QtWidgets.QPushButton('Save NIFTI', self)
-            self.button3 = QtWidgets.QPushButton('Help', self); 
-            self.button1.clicked.connect(lambda: self.openFileNameDialog())
-            self.button2.clicked.connect(lambda: self.printOut(self.button2.text()))
-            self.button2.clicked.connect(lambda: self.printOut(self.button3.text()))
-
-            self.sub_menu_options.addWidget(self.button1)
-            self.sub_menu_options.addWidget(self.button2)
+            self.button3 = QtWidgets.QPushButton('Run Canny Edge Detection', self); 
+            self.justify_view1 = QtWidgets.QHBoxLayout()
+            self.h_view_arr = []
+            self.label_arr = []
+            self.text_arr = ["Ouput Image Name:", "Variance:", "Lower Threshold:", "Upper Threshold:"]
+            self.default_arr = ["../data/results/1000_3_threshold.nii.gz","0.5", "50", "200"]
+            self.input_arr = []
+            for i in range(len(self.text_arr)):
+                self.h_view_arr.append(QtWidgets.QHBoxLayout())
+                self.label_arr.append(QLabel(self))
+                self.label_arr[i].setText(self.text_arr[i])
+                self.input_arr.append(QLineEdit(self.default_arr[i]))
+                self.h_view_arr[i].addWidget(self.label_arr[i])
+                self.h_view_arr[i].addWidget(self.input_arr[i])
+                self.sub_menu_options.addLayout(self.h_view_arr[i])
+            self.button3.clicked.connect(lambda: self.getCanny(
+                                                    self.input_file_name, self.input_arr[0].text(), self.input_arr[1].text(), 
+                                                    self.input_arr[2].text(), self.input_arr[3].text()
+                                                )
+                                        )
+                                                
             self.sub_menu_options.addWidget(self.button3)
 
         elif type == "Segmentation":
@@ -406,6 +418,11 @@ class MainWindow(QtWidgets.QMainWindow):
         binaryThreshold.arg_func(["../scripts/binaryThreshold.py", 
             str(inputImage), str(outputImage), str(lowerThres), str(upperThres), str(outsideValue), str(insideValue)])
         
+        self.openImage(outputImage)
+
+    def getCanny(self, inputImage, outputImage, variance, lowerThres, upperThres):
+        cannyEdgeDetection.arg_func(["../scripts/cannyEdgeDetection.py", 
+            str(inputImage), str(outputImage), str(variance), str(lowerThres), str(upperThres)])
         self.openImage(outputImage)
 
     def getAtropos(self, inputImage, outputSeg, outputCSF, outputGM, outputWM):

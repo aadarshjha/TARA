@@ -10,17 +10,17 @@ import itk
 
 def arg_func(args):
     #Make sure input is selected
-    if len(sys.argv) != 6:
-        print("Usage: " + sys.argv[0] + " <InputImage> <OutputImage> "
+    if len(args) != 6:
+        print("Usage: " + args[0] + " <InputImage> <OutputImage> "
               "<Variance> <LowerThreshold> <UpperThreshold>")
         sys.exit(1)
 
     #Inputting the variables
-    inputImage = "../data/input/" + sys.argv[1]
-    outputImage = "../data/results/" + sys.argv[2]
-    variance = float(sys.argv[3])
-    lowerThreshold = float(sys.argv[4])
-    upperThreshold = float(sys.argv[5])
+    inputImage = args[1]
+    outputImage = args[2]
+    variance = float(args[3])
+    lowerThreshold = float(args[4])
+    upperThreshold = float(args[5])
 
     InputPixelType = itk.F
     OutputPixelType = itk.UC
