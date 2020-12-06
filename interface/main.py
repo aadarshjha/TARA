@@ -1,5 +1,5 @@
-import sys
 import vtk
+
 from PyQt5 import QtCore, QtWidgets
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from PyQt5.QtWidgets import QFileDialog
@@ -8,6 +8,13 @@ from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
 from PyQt5 import QtCore
+import subprocess
+import sys 
+
+import sys
+# insert at 1, 0 is the script path (or '' in REPL)
+sys.path.insert(1, '../scripts/')
+import binaryThreshold
 
 # Just importing all. 
 from PyQt5.QtWidgets import * 
@@ -46,7 +53,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.main_layout.addLayout(self.menu_layout)
 
         # VTK Widget, split the view. 
-        self.options_layout = QtWidgets.QHBoxLayout()
+        self.overall_layout = QtWidgets.QHBoxLayout(); 
+        self.options_layout = QtWidgets.QVBoxLayout()
+        self.sub_menu_options = QtWidgets.QHBoxLayout()
 
         # getting optoins from the user: 
         # we allow for access of: 
@@ -73,12 +82,15 @@ class MainWindow(QtWidgets.QMainWindow):
         # call back function: 
         self.cb.currentTextChanged.connect(self.pickBackend)
 
-        self.sub_menu_options = QtWidgets.QHBoxLayout()
+        
 
         self.vtkWidget = QVTKRenderWindowInteractor(self.frame)
-        self.options_layout.addWidget(self.vtkWidget)
-        self.main_layout.addLayout(self.options_layout)
-        self.main_layout.addLayout(self.sub_menu_options)
+      
+        self.overall_layout.addLayout(self.options_layout)
+        self.main_layout.addLayout(self.overall_layout)
+        self.options_layout.addLayout(self.sub_menu_options)
+
+        self.overall_layout.addWidget(self.vtkWidget)
  
         ren = vtk.vtkRenderer()
 
@@ -138,12 +150,7 @@ class MainWindow(QtWidgets.QMainWindow):
         scalarRange = reslice.GetOutput().GetScalarRange()
         extent = reslice.GetOutput().GetExtent()
 
-        # viewport = [
-        #     [ 0.67, 0.0, 1.0, 0.5 ],
-        #     [ 0.67, 0.5, 1.0, 1.0 ],
-        #     [ 0.0, 0.0, 0.67, 1.0 ],
-        # ]
-
+    
         viewport = [[0.0, 0.0, 0.33, 1.0],
                     [0.33, 0.0, 0.67, 1.0],
                     [0.67, 0.0, 1.0, 1.0]]
@@ -230,19 +237,17 @@ class MainWindow(QtWidgets.QMainWindow):
         if type == "Binary Threshold":
             # we pull up a different UI to the user, this will have configurable views 
 
-            # attempting to call the script: 
-
             # file path "../scripts/binaryThreshold.py"
 
-            
+            # running the file. 
 
-
-            self.button1 = QtWidgets.QPushButton('Open NIFTI', self)
-            self.button2 = QtWidgets.QPushButton('Save NIFTI', self)
-            self.button3 = QtWidgets.QPushButton('Help', self); 
-            self.button1.clicked.connect(lambda: self.openFileNameDialog())
-            self.button2.clicked.connect(lambda: self.printOut(self.button2.text()))
-            self.button2.clicked.connect(lambda: self.printOut(self.button3.text()))
+            # self.button1 = QtWidgets.QPushButton('Open NIFTI', self)
+            # self.button2 = QtWidgets.QPushButton('Save NIFTI', self)
+            self.button3 = QtWidgets.QPushButton('Run Binary Threshold', self); 
+            # self.button1.clicked.connect(lambda: self.openFileNameDialog())
+            # self.button2.clicked.connect(lambda: self.printOut(self.button2.text()))
+            # binaryThreshold.py 1000_3.nii.gz 1000_3_threshold.nii.gz 600 1500 0 1
+            self.button3.clicked.connect(lambda: self.getBinThres("1000_3.nii.gz", "1000_3_threshold_test.nii.gz", 600, 1500, 0, 1))
 
             self.sub_menu_options.addWidget(self.button1)
             self.sub_menu_options.addWidget(self.button2)
@@ -264,6 +269,23 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
         return type 
+
+
+    #    print("Usage: " + sys.argv[0] + " <inputImage> <outputImage> "
+    #         "<lowerThreshold> <upperThreshold> <outsideValue> <insideValue>")
+    #     sys.exit(1)
+
+    def getBinThres(self, inputImage, outputImage, lowerThres, upperThres,
+                    outsideValue, insideValue):
+        # actually calling the script. 
+        # print("is this working?")
+        # subprocess.run(["python3","../scripts/binaryThreshold.py", 
+        #     str(inputImage), str(outputImage), str(lowerThres), str(upperThres), str(outsideValue), str(insideValue)], 
+        #     shell=True, check=True, capture_output=True)
+
+        print("is this working?")
+        binaryThreshold.arg_func(["../scripts/binaryThreshold.py", 
+            str(inputImage), str(outputImage), str(lowerThres), str(upperThres), str(outsideValue), str(insideValue)])
 
 
 if __name__ == "__main__":

@@ -8,21 +8,22 @@ Ex Input: binaryThreshold.py 1000_3.nii.gz 1000_3_threshold.nii.gz 600 1500 0 1
 import sys
 import itk
 
-def arg_func(): 
+def arg_func(args): 
     #Make sure input is selected
-    if len(sys.argv) != 7:
-        print("Usage: " + sys.argv[0] + " <inputImage> <outputImage> "
+    if len(args) != 7:
+        print("Usage: " + args[0] + " <inputImage> <outputImage> "
             "<lowerThreshold> <upperThreshold> <outsideValue> <insideValue>")
         sys.exit(1)
 
     #Inputting the variables
-    inputImage = "../data/input/" + sys.argv[1]
-    outputImage = "../data/results/" + sys.argv[2]
-    lowerThreshold = int(sys.argv[3])
-    upperThreshold = int(sys.argv[4])
-    outsideValue = int(sys.argv[5])
-    insideValue = int(sys.argv[6])
+    inputImage = "../data/input/" + args[1]
+    outputImage = "../data/results/" + args[2]
+    lowerThreshold = int(args[3])
+    upperThreshold = int(args[4])
+    outsideValue = int(args[5])
+    insideValue = int(args[6])
 
+    print("HELLLO")
     #set up a reader
     reader = itk.ImageFileReader.New(FileName=inputImage)
 
@@ -40,4 +41,4 @@ def arg_func():
     writer.Update()
 
 if __name__ == '__main__':
-    arg_func()
+    arg_func(sys.argv)
