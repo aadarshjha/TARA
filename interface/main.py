@@ -20,6 +20,8 @@ import binaryThreshold
 import cannyEdgeDetection
 import atropos
 import clampImageFilter
+import gaussianSmoothing
+
 # import brainExtraction
 # import deepAtropos
 # import superResolution
@@ -336,6 +338,34 @@ class MainWindow(QtWidgets.QMainWindow):
                                                 
             self.sub_menu_options.addWidget(self.button3)
 
+        elif type == "Gaussian Smoothing":
+            self.button3 = QtWidgets.QPushButton('Run Gaussian Smoothing', self); 
+            self.justify_view1 = QtWidgets.QHBoxLayout()
+            self.h_view_arr = []
+            self.label_arr = []
+
+            #         print("Usage: " + args[0] + " <inputImage> <outputImage> <sigma>")
+
+            self.text_arr = ["Ouput Image Name:", "Sigma:"]
+            self.default_arr = ["../data/results/1000_3_threshold.nii.gz", "2.5"]
+            self.input_arr = []
+            for i in range(len(self.text_arr)):
+                self.h_view_arr.append(QtWidgets.QHBoxLayout())
+                self.label_arr.append(QLabel(self))
+                self.label_arr[i].setText(self.text_arr[i])
+                self.input_arr.append(QLineEdit(self.default_arr[i]))
+                self.h_view_arr[i].addWidget(self.label_arr[i])
+                self.h_view_arr[i].addWidget(self.input_arr[i])
+                self.sub_menu_options.addLayout(self.h_view_arr[i])
+            self.button3.clicked.connect(lambda: self.getGauss(
+                                                    self.input_file_name,
+                                                    self.input_arr[0].text(),
+                                                    self.input_arr[1].text()
+                                                )
+                                        )
+                                                
+            self.sub_menu_options.addWidget(self.button3)
+
         elif type == "Segmentation":
             self.text_arr = ['Segmetnation Output:', 'CSF Output:', 'GM Output',
                             'WM Output']
@@ -456,6 +486,12 @@ class MainWindow(QtWidgets.QMainWindow):
     def getClamp(self, inputImage, outputImage, lowerBound, upperBound):
         clampImageFilter.arg_func(["../scripts/clampImageFilter.py", 
             str(inputImage), str(outputImage), str(lowerBound), str(upperBound)])
+        self.openImage(outputImage)
+
+    def getGauss(self, inputImage, outputImage, sigma):
+        gaussianSmoothing.arg_func(["../scripts/gaussianSmoothing.py", 
+            str(inputImage), str(outputImage), str(sigma)])
+            
         self.openImage(outputImage)
 
     def getAtropos(self, inputImage, outputSeg, outputCSF, outputGM, outputWM):
