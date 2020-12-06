@@ -19,9 +19,9 @@ sys.path.insert(1, '../scripts/')
 import binaryThreshold
 import cannyEdgeDetection
 import atropos
-import brainExtraction
-import deepAtropos
-import superResolution
+# import brainExtraction
+# import deepAtropos
+# import superResolution
 
 # Just importing all. 
 from PyQt5.QtWidgets import * 
