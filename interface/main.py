@@ -3,6 +3,15 @@ import vtk
 from PyQt5 import QtCore, QtWidgets
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QLabel
+from PyQt5.QtWidgets import QVBoxLayout
+from PyQt5.QtWidgets import QWidget
+from PyQt5 import QtCore
+
+# Just importing all. 
+from PyQt5.QtWidgets import * 
+from PyQt5.QtGui import * 
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent = None):
@@ -12,26 +21,67 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setFixedHeight(520)
         self.setFixedWidth(900)
  
-        self.main_layout = QtWidgets.QHBoxLayout()
+        self.main_layout = QtWidgets.QVBoxLayout()
+
+        # Adding some text here: 
+        self.label= QLabel("TARA")
+        self.label.setFont(QFont('Arial', 30)) 
+
+        self.label.setAlignment(QtCore.Qt.AlignCenter)
+        self.main_layout.addWidget(self.label)
 
         # Add menu widgets
-        self.menu_layout = QtWidgets.QVBoxLayout()
+        self.menu_layout = QtWidgets.QHBoxLayout()
         self.button1 = QtWidgets.QPushButton('Open NIFTI', self)
-        self.button2 = QtWidgets.QPushButton('Button2', self)
+        self.button2 = QtWidgets.QPushButton('Save NIFTI', self)
+        self.button3 = QtWidgets.QPushButton('Help', self); 
         self.button1.clicked.connect(lambda: self.openFileNameDialog())
         self.button2.clicked.connect(lambda: self.printOut(self.button2.text()))
+        self.button2.clicked.connect(lambda: self.printOut(self.button3.text()))
 
         self.menu_layout.addWidget(self.button1)
         self.menu_layout.addWidget(self.button2)
-
+        self.menu_layout.addWidget(self.button3)
 
         self.main_layout.addLayout(self.menu_layout)
 
-        # VTK Widget
+        # VTK Widget, split the view. 
+        self.options_layout = QtWidgets.QHBoxLayout()
+
+        # getting optoins from the user: 
+        # we allow for access of: 
+
+        # creating a qt form: 
+
+        self.cb = QComboBox()
+        self.cb.addItem("Select Image Processing Algorithm")
+        self.cb.addItem("Binary Threshold")  
+        self.cb.addItem("Canny Edge Detection")  
+        self.cb.addItem("Clamp Image Filter")  
+        self.cb.addItem("Gaussian Smoothing")  
+        self.cb.addItem("Median Filter")  
+        self.cb.addItem("Otsu Threshold")  
+        self.cb.addItem("Sobel Edge Detection")
+        self.cb.addItem("Registration")
+        self.cb.addItem("Segmentation")     
+        self.cb.addItem("Brain Extraction")
+        self.cb.addItem("Deep Segmentation")
+        self.cb.addItem("Super Resolution")
+        self.options_layout.addWidget(self.cb)
+        self.options_layout.addWidget(self.button1)
+
+        # call back function: 
+        self.cb.currentTextChanged.connect(self.pickBackend)
+
+        self.sub_menu_options = QtWidgets.QHBoxLayout()
+
         self.vtkWidget = QVTKRenderWindowInteractor(self.frame)
-        self.main_layout.addWidget(self.vtkWidget)
+        self.options_layout.addWidget(self.vtkWidget)
+        self.main_layout.addLayout(self.options_layout)
+        self.main_layout.addLayout(self.sub_menu_options)
  
         ren = vtk.vtkRenderer()
+
         self.renderers.append(ren)
         self.vtkWidget.GetRenderWindow().AddRenderer(ren)
         self.iren = self.vtkWidget.GetRenderWindow().GetInteractor()
@@ -158,6 +208,63 @@ class MainWindow(QtWidgets.QMainWindow):
 
         renWin.Render()
         self.iren.Start()
+            
+
+        self.iren.Initialize()
+    
+    def pickBackend(self, type):
+        # we display a particular screen depending on the type of 
+        # values that the user will give to us. 
+
+        # for instance, in the case of binary thres, we take
+        # Ex Input: binaryThreshold.py 1000_3.nii.gz 1000_3_threshold.nii.gz 600 1500 0 1
+        # according to ashwin. 
+
+        ## clearing the view: 
+        
+        while self.sub_menu_options.count():
+            child = self.sub_menu_options.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+
+        if type == "Binary Threshold":
+            # we pull up a different UI to the user, this will have configurable views 
+
+            # attempting to call the script: 
+
+            # file path "../scripts/binaryThreshold.py"
+
+            
+
+
+            self.button1 = QtWidgets.QPushButton('Open NIFTI', self)
+            self.button2 = QtWidgets.QPushButton('Save NIFTI', self)
+            self.button3 = QtWidgets.QPushButton('Help', self); 
+            self.button1.clicked.connect(lambda: self.openFileNameDialog())
+            self.button2.clicked.connect(lambda: self.printOut(self.button2.text()))
+            self.button2.clicked.connect(lambda: self.printOut(self.button3.text()))
+
+            self.sub_menu_options.addWidget(self.button1)
+            self.sub_menu_options.addWidget(self.button2)
+            self.sub_menu_options.addWidget(self.button3)
+        elif type == "Canny Edge Detection":
+            self.button1 = QtWidgets.QPushButton('Open TESTS', self)
+            self.button2 = QtWidgets.QPushButton('Save NIFTI', self)
+            self.button3 = QtWidgets.QPushButton('Help', self); 
+            self.button1.clicked.connect(lambda: self.openFileNameDialog())
+            self.button2.clicked.connect(lambda: self.printOut(self.button2.text()))
+            self.button2.clicked.connect(lambda: self.printOut(self.button3.text()))
+
+            self.sub_menu_options.addWidget(self.button1)
+            self.sub_menu_options.addWidget(self.button2)
+            self.sub_menu_options.addWidget(self.button3)
+
+
+
+
+
+        return type 
+
 
 if __name__ == "__main__":
  
