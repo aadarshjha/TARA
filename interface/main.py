@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QLineEdit
 from PyQt5 import QtCore
 import subprocess
 import sys 
@@ -14,7 +15,11 @@ import sys
 import sys
 # insert at 1, 0 is the script path (or '' in REPL)
 sys.path.insert(1, '../scripts/')
+# put all the imports. 
 import binaryThreshold
+import cannyEdgeDetection
+import atropos
+
 
 # Just importing all. 
 from PyQt5.QtWidgets import * 
@@ -22,7 +27,9 @@ from PyQt5.QtGui import *
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent = None):
+        
         QtWidgets.QMainWindow.__init__(self, parent)
+        self.input_file_name = "../data/input/1000_3.nii.gz"
         self.renderers = []
         self.frame = QtWidgets.QFrame()
         self.setFixedHeight(520)
@@ -55,7 +62,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # VTK Widget, split the view. 
         self.overall_layout = QtWidgets.QHBoxLayout(); 
         self.options_layout = QtWidgets.QVBoxLayout()
-        self.sub_menu_options = QtWidgets.QHBoxLayout()
+        self.sub_menu_options = QtWidgets.QVBoxLayout()
 
         # getting optoins from the user: 
         # we allow for access of: 
@@ -64,18 +71,27 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.cb = QComboBox()
         self.cb.addItem("Select Image Processing Algorithm")
+
+        # options. 
+
+        # aadarsh   
         self.cb.addItem("Binary Threshold")  
         self.cb.addItem("Canny Edge Detection")  
         self.cb.addItem("Clamp Image Filter")  
         self.cb.addItem("Gaussian Smoothing")  
+
+        # terry
         self.cb.addItem("Median Filter")  
         self.cb.addItem("Otsu Threshold")  
         self.cb.addItem("Sobel Edge Detection")
         self.cb.addItem("Registration")
+
+        # raahul. 
         self.cb.addItem("Segmentation")     
         self.cb.addItem("Brain Extraction")
         self.cb.addItem("Deep Segmentation")
         self.cb.addItem("Super Resolution")
+
         self.options_layout.addWidget(self.cb)
         self.options_layout.addWidget(self.button1)
 
@@ -126,6 +142,7 @@ class MainWindow(QtWidgets.QMainWindow):
         print(msg)
 
     def openImage(self, file_name):
+        self.input_file_name = file_name
         reader = vtk.vtkNIFTIImageReader()
         reader.SetFileName(file_name)
         reader.Update()
@@ -228,30 +245,40 @@ class MainWindow(QtWidgets.QMainWindow):
         # according to ashwin. 
 
         ## clearing the view: 
-        
-        while self.sub_menu_options.count():
-            child = self.sub_menu_options.takeAt(0)
-            if child.widget():
-                child.widget().deleteLater()
+        while self.sub_menu_options.count(): 
+            while self.sub_menu_options.count():
+                child = self.sub_menu_options.takeAt(0)
+                if child.widget():
+                    child.widget().deleteLater()
+
+        # @RAAHUL FIGURE HTIS OUT LATER
+                
 
         if type == "Binary Threshold":
-            # we pull up a different UI to the user, this will have configurable views 
-
-            # file path "../scripts/binaryThreshold.py"
-
-            # running the file. 
-
-            # self.button1 = QtWidgets.QPushButton('Open NIFTI', self)
-            # self.button2 = QtWidgets.QPushButton('Save NIFTI', self)
             self.button3 = QtWidgets.QPushButton('Run Binary Threshold', self); 
-            # self.button1.clicked.connect(lambda: self.openFileNameDialog())
-            # self.button2.clicked.connect(lambda: self.printOut(self.button2.text()))
-            # binaryThreshold.py 1000_3.nii.gz 1000_3_threshold.nii.gz 600 1500 0 1
-            self.button3.clicked.connect(lambda: self.getBinThres("1000_3.nii.gz", "1000_3_threshold_test.nii.gz", 600, 1500, 0, 1))
 
-            self.sub_menu_options.addWidget(self.button1)
-            self.sub_menu_options.addWidget(self.button2)
+            self.justify_view1 = QtWidgets.QHBoxLayout()
+
+            self.h_view_arr = []
+            self.label_arr = []
+            self.text_arr = ["Ouput Image Name:", "Lower Threshold:", "Upper Threshold:", "Outside Value:", "Inside Value:"]
+            self.default_arr = ["../data/results/1000_3_threshold.nii.gz","600", "1500", "0", "1"]
+            self.input_arr = []
+            for i in range(len(self.text_arr)):
+                self.h_view_arr.append(QtWidgets.QHBoxLayout())
+                self.label_arr.append(QLabel(self))
+                self.label_arr[i].setText(self.text_arr[i])
+                self.input_arr.append(QLineEdit(self.default_arr[i]))
+                self.h_view_arr[i].addWidget(self.label_arr[i])
+                self.h_view_arr[i].addWidget(self.input_arr[i])
+                self.sub_menu_options.addLayout(self.h_view_arr[i])
+        
+            self.button3.clicked.connect(lambda: self.getBinThres(self.input_file_name, (self.input_arr[0].text()), self.input_arr[1].text(), 
+                                                                  self.input_arr[2].text(), self.input_arr[3].text(), self.input_arr[4].text()))
+                                                
             self.sub_menu_options.addWidget(self.button3)
+
+        
         elif type == "Canny Edge Detection":
             self.button1 = QtWidgets.QPushButton('Open TESTS', self)
             self.button2 = QtWidgets.QPushButton('Save NIFTI', self)
@@ -264,28 +291,18 @@ class MainWindow(QtWidgets.QMainWindow):
             self.sub_menu_options.addWidget(self.button2)
             self.sub_menu_options.addWidget(self.button3)
 
-
-
-
+        # elif: 
 
         return type 
 
 
-    #    print("Usage: " + sys.argv[0] + " <inputImage> <outputImage> "
-    #         "<lowerThreshold> <upperThreshold> <outsideValue> <insideValue>")
-    #     sys.exit(1)
-
     def getBinThres(self, inputImage, outputImage, lowerThres, upperThres,
                     outsideValue, insideValue):
-        # actually calling the script. 
-        # print("is this working?")
-        # subprocess.run(["python3","../scripts/binaryThreshold.py", 
-        #     str(inputImage), str(outputImage), str(lowerThres), str(upperThres), str(outsideValue), str(insideValue)], 
-        #     shell=True, check=True, capture_output=True)
-
-        print("is this working?")
+            
         binaryThreshold.arg_func(["../scripts/binaryThreshold.py", 
             str(inputImage), str(outputImage), str(lowerThres), str(upperThres), str(outsideValue), str(insideValue)])
+        
+        self.openImage(outputImage)
 
 
 if __name__ == "__main__":

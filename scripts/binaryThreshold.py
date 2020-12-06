@@ -11,13 +11,17 @@ import itk
 def arg_func(args): 
     #Make sure input is selected
     if len(args) != 7:
-        print("Usage: " + args[0] + " <inputImage> <outputImage> "
+        print("Usage: " + args[0] + " <inputImage> <outputImage> " + 
             "<lowerThreshold> <upperThreshold> <outsideValue> <insideValue>")
         sys.exit(1)
 
     #Inputting the variables
-    inputImage = "../data/input/" + args[1]
-    outputImage = "../data/results/" + args[2]
+    # inputImage = "../data/input/" + args[1]
+    # outputImage = "../data/results/" + args[2]
+
+    inputImage = args[1]
+    outputImage =  args[2]
+
     lowerThreshold = int(args[3])
     upperThreshold = int(args[4])
     outsideValue = int(args[5])
