@@ -19,6 +19,7 @@ sys.path.insert(1, '../scripts/')
 import binaryThreshold
 import cannyEdgeDetection
 import atropos
+import clampImageFilter
 # import brainExtraction
 # import deepAtropos
 # import superResolution
@@ -308,6 +309,33 @@ class MainWindow(QtWidgets.QMainWindow):
                                                 
             self.sub_menu_options.addWidget(self.button3)
 
+        elif type == "Clamp Image Filter":
+            self.button3 = QtWidgets.QPushButton('Run Clamp Image Filter', self); 
+            self.justify_view1 = QtWidgets.QHBoxLayout()
+            self.h_view_arr = []
+            self.label_arr = []
+            
+            # print("Usage: " + args[0] + " <inputImage> <outputImage> <lowerBoundOutput> <UpperBoundOutput")
+
+            self.text_arr = ["Ouput Image Name:", "Lower Bound Output:", "Upper Bound Output:"]
+            self.default_arr = ["../data/results/1000_3_threshold.nii.gz", "0", "5000"]
+            self.input_arr = []
+            for i in range(len(self.text_arr)):
+                self.h_view_arr.append(QtWidgets.QHBoxLayout())
+                self.label_arr.append(QLabel(self))
+                self.label_arr[i].setText(self.text_arr[i])
+                self.input_arr.append(QLineEdit(self.default_arr[i]))
+                self.h_view_arr[i].addWidget(self.label_arr[i])
+                self.h_view_arr[i].addWidget(self.input_arr[i])
+                self.sub_menu_options.addLayout(self.h_view_arr[i])
+            self.button3.clicked.connect(lambda: self.getClamp(
+                                                    self.input_file_name, self.input_arr[0].text(), self.input_arr[1].text(), 
+                                                    self.input_arr[2].text()
+                                                )
+                                        )
+                                                
+            self.sub_menu_options.addWidget(self.button3)
+
         elif type == "Segmentation":
             self.text_arr = ['Segmetnation Output:', 'CSF Output:', 'GM Output',
                             'WM Output']
@@ -423,6 +451,11 @@ class MainWindow(QtWidgets.QMainWindow):
     def getCanny(self, inputImage, outputImage, variance, lowerThres, upperThres):
         cannyEdgeDetection.arg_func(["../scripts/cannyEdgeDetection.py", 
             str(inputImage), str(outputImage), str(variance), str(lowerThres), str(upperThres)])
+        self.openImage(outputImage)
+    
+    def getClamp(self, inputImage, outputImage, lowerBound, upperBound):
+        clampImageFilter.arg_func(["../scripts/clampImageFilter.py", 
+            str(inputImage), str(outputImage), str(lowerBound), str(upperBound)])
         self.openImage(outputImage)
 
     def getAtropos(self, inputImage, outputSeg, outputCSF, outputGM, outputWM):

@@ -10,15 +10,15 @@ import itk
 
 def arg_func(args):
     #Make sure input is selected
-    if len(sys.argv) != 5:
-        print("Usage: " + sys.argv[0] + " <inputImage> <outputImage> <lowerBoundOutput> <UpperBoundOutput")
+    if len(args) != 5:
+        print("Usage: " + args[0] + " <inputImage> <outputImage> <lowerBoundOutput> <UpperBoundOutput")
         sys.exit(1)
 
     #Inputting the variables
-    inputImage = "../data/results/" + sys.argv[1]
-    outputImage = "../data/results/" + sys.argv[2]
-    lowerBound = int(sys.argv[3])
-    upperBound = int(sys.argv[4])
+    inputImage = args[1]
+    outputImage = args[2]
+    lowerBound = int(args[3])
+    upperBound = int(args[4])
 
     #set up a reader
     reader = itk.ImageFileReader.New(FileName=inputImage)
