@@ -15,8 +15,8 @@ def arg_func(args):
         print("Usage: " + sys.argv[0] + " <inputImage> <OutputImage>")
         sys.exit(1)
 
-    inputImage = "../data/input/" + sys.argv[1]
-    outputImage = "../data/results/" + sys.argv[2]
+    inputImage = sys.argv[1]
+    outputImage = sys.argv[2]
 
     image = ants.image_read(inputImage)
     superRes = antspynet.utilities.mri_super_resolution(image)

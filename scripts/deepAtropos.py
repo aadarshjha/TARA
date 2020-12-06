@@ -19,15 +19,15 @@ def arg_func(args):
               "<BackgroundOutput> <CSFOutput> <GMOutput> <WMOutput> <DeepGMOutput> <BrainStem> <Cerebellum>")
         sys.exit(1)
 
-    inputImage = "../data/input/" + sys.argv[1]
-    segmentationOutput = "../data/results/" + sys.argv[2]
-    BackgroundOutput = "../data/results/" + sys.argv[3]
-    CSFOutput = "../data/results/" + sys.argv[4]
-    GMOutput = "../data/results/" + sys.argv[5]
-    WMOutput = "../data/results/" + sys.argv[6]
-    DeepGMOutput = "../data/results/" + sys.argv[7]
-    BrainStemOutput = "../data/results/" + sys.argv[8]
-    CerebellumOutput = "../data/results/" + sys.argv[9]
+    inputImage = sys.argv[1]
+    segmentationOutput = sys.argv[2]
+    BackgroundOutput = sys.argv[3]
+    CSFOutput = sys.argv[4]
+    GMOutput = sys.argv[5]
+    WMOutput = sys.argv[6]
+    DeepGMOutput = sys.argv[7]
+    BrainStemOutput = sys.argv[8]
+    CerebellumOutput = sys.argv[9]
 
     image = ants.image_read(inputImage)
     flash = antspynet.utilities.deep_atropos(image, do_preprocessing=True, verbose=True)

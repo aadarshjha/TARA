@@ -15,8 +15,8 @@ def arg_func(args):
         print("Usage: " + sys.argv[0] + " <inputImage> <outputImage>")
         sys.exit(1)
 
-    inputImage = "../data/input/" + sys.argv[1]
-    outputImage = "../data/results/" + sys.argv[2]
+    inputImage = sys.argv[1]
+    outputImage = sys.argv[2]
 
     brain_image = ants.image_read(inputImage)
     probability_brain_mask = antspynet.utilities.brain_extraction(brain_image, modality="t1")

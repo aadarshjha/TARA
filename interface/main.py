@@ -19,7 +19,9 @@ sys.path.insert(1, '../scripts/')
 import binaryThreshold
 import cannyEdgeDetection
 import atropos
-
+import brainExtraction
+import deepAtropos
+import superResolution
 
 # Just importing all. 
 from PyQt5.QtWidgets import * 
@@ -36,6 +38,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setFixedWidth(900)
  
         self.main_layout = QtWidgets.QVBoxLayout()
+        self.h_view_arr = []
 
         # Adding some text here: 
         self.label= QLabel("TARA")
@@ -97,9 +100,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # call back function: 
         self.cb.currentTextChanged.connect(self.pickBackend)
-
-        
-
         self.vtkWidget = QVTKRenderWindowInteractor(self.frame)
       
         self.overall_layout.addLayout(self.options_layout)
@@ -135,7 +135,6 @@ class MainWindow(QtWidgets.QMainWindow):
             options=options)
 
         if file_name:
-            print(file_name)
             self.openImage(file_name)
 
     def printOut(self, msg):
@@ -245,14 +244,20 @@ class MainWindow(QtWidgets.QMainWindow):
         # according to ashwin. 
 
         ## clearing the view: 
-        while self.sub_menu_options.count(): 
-            while self.sub_menu_options.count():
-                child = self.sub_menu_options.takeAt(0)
+        for layout in self.h_view_arr:
+            while layout.count():
+                child = layout.takeAt(0)
                 if child.widget():
                     child.widget().deleteLater()
 
-        # @RAAHUL FIGURE HTIS OUT LATER
-                
+        while self.sub_menu_options.count():
+            child = self.sub_menu_options.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()                
+
+        self.h_view_arr = []
+        self.label_arr = []
+        self.input_arr = []
 
         if type == "Binary Threshold":
             self.button3 = QtWidgets.QPushButton('Run Binary Threshold', self); 
@@ -261,7 +266,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             self.h_view_arr = []
             self.label_arr = []
-            self.text_arr = ["Ouput Image Name:", "Lower Threshold:", "Upper Threshold:", "Outside Value:", "Inside Value:"]
+            self.text_arr = ["Output Image Name:", "Lower Threshold:", "Upper Threshold:", "Outside Value:", "Inside Value:"]
             self.default_arr = ["../data/results/1000_3_threshold.nii.gz","600", "1500", "0", "1"]
             self.input_arr = []
             for i in range(len(self.text_arr)):
@@ -291,19 +296,137 @@ class MainWindow(QtWidgets.QMainWindow):
             self.sub_menu_options.addWidget(self.button2)
             self.sub_menu_options.addWidget(self.button3)
 
-        # elif: 
+        elif type == "Segmentation":
+            self.text_arr = ['Segmetnation Output:', 'CSF Output:', 'GM Output',
+                            'WM Output']
+            self.default_arr = ['../data/results/1000_3_atroposSegmentation.nii.gz',
+                                '../data/results/1000_3_atroposCSF.nii.gz',
+                                '../data/results/1000_3_atroposGM.nii.gz',
+                                '../data/results/1000_3_atroposWM.nii.gz']
+
+            for i in range(len(self.text_arr)):
+                self.h_view_arr.append(QtWidgets.QHBoxLayout())
+                self.label_arr.append(QLabel(self))
+                self.label_arr[i].setText(self.text_arr[i])
+                self.input_arr.append(QLineEdit(self.default_arr[i]))
+                self.h_view_arr[i].addWidget(self.label_arr[i])
+                self.h_view_arr[i].addWidget(self.input_arr[i])
+                self.sub_menu_options.addLayout(self.h_view_arr[i])
+
+
+            self.run_button = QtWidgets.QPushButton('Run Atropos 3-tissue', self); 
+            self.run_button.clicked.connect(
+                lambda: self.getAtropos(self.input_file_name,  
+                    self.input_arr[0].text(), self.input_arr[1].text(), 
+                    self.input_arr[2].text(), self.input_arr[3].text()))
+            self.sub_menu_options.addWidget(self.run_button)
+            
+        elif type == "Brain Extraction":
+            self.text_arr = ['Output:']
+            self.default_arr = ['../data/results/SubjectA_T1_brainExtraction.nii.gz']
+
+            for i in range(len(self.text_arr)):
+                self.h_view_arr.append(QtWidgets.QHBoxLayout())
+                self.label_arr.append(QLabel(self))
+                self.label_arr[i].setText(self.text_arr[i])
+                self.input_arr.append(QLineEdit(self.default_arr[i]))
+                self.h_view_arr[i].addWidget(self.label_arr[i])
+                self.h_view_arr[i].addWidget(self.input_arr[i])
+                self.sub_menu_options.addLayout(self.h_view_arr[i])
+
+
+            self.run_button = QtWidgets.QPushButton('Run Brain Extraction', self); 
+            self.run_button.clicked.connect(
+                lambda: self.getBrainExtraction(self.input_file_name,  
+                    self.input_arr[0].text()))
+            self.sub_menu_options.addWidget(self.run_button)
+
+        elif type == "Deep Segmentation":
+            self.text_arr = ['Segmentation Output:', 'Background Output:', 
+                            'CSF Output:', 'GM Output:', 'WM Output:', 
+                            'Deep GM Output:', 'Brain Stem Output:',
+                            'Cerebellum Output:']
+            self.default_arr = ['../data/results/1000_3_deepAtropos.nii.gz',
+                                '../data/results/1000_3_deepAtroposBackground.nii.gz',
+                                '../data/results/1000_3_deepAtroposCSF.nii.gz',
+                                '../data/results/1000_3_deepAtroposGM.nii.gz',
+                                '../data/results/1000_3_deepAtroposWM.nii.gz',
+                                '../data/results/1000_3_deepAtroposDeepGM.nii.gz',
+                                '../data/results/1000_3_deepAtroposBrainStem.nii.gz',
+                                '../data/results/1000_3_deepAtroposCerebellum.nii.gz',]
+
+            for i in range(len(self.text_arr)):
+                self.h_view_arr.append(QtWidgets.QHBoxLayout())
+                self.label_arr.append(QLabel(self))
+                self.label_arr[i].setText(self.text_arr[i])
+                self.input_arr.append(QLineEdit(self.default_arr[i]))
+                self.h_view_arr[i].addWidget(self.label_arr[i])
+                self.h_view_arr[i].addWidget(self.input_arr[i])
+                self.sub_menu_options.addLayout(self.h_view_arr[i])
+
+
+            self.run_button = QtWidgets.QPushButton('Run Atropos 6-tissue', self); 
+            self.run_button.clicked.connect(
+                lambda: self.getDeepAtropos(self.input_file_name,  
+                    self.input_arr[0].text(), self.input_arr[1].text(), 
+                    self.input_arr[2].text(), self.input_arr[3].text(),
+                    self.input_arr[4].text(), self.input_arr[5].text(),
+                    self.input_arr[6].text(), self.input_arr[7].text()))
+            self.sub_menu_options.addWidget(self.run_button)
+
+        elif type == "Super Resolution":
+            self.text_arr = ['Output:']
+            self.default_arr = ['../data/results/1000_3_superres.nii.gz']
+
+            for i in range(len(self.text_arr)):
+                self.h_view_arr.append(QtWidgets.QHBoxLayout())
+                self.label_arr.append(QLabel(self))
+                self.label_arr[i].setText(self.text_arr[i])
+                self.input_arr.append(QLineEdit(self.default_arr[i]))
+                self.h_view_arr[i].addWidget(self.label_arr[i])
+                self.h_view_arr[i].addWidget(self.input_arr[i])
+                self.sub_menu_options.addLayout(self.h_view_arr[i])
+
+
+            self.run_button = QtWidgets.QPushButton('Run Super Resolution', self); 
+            self.run_button.clicked.connect(
+                lambda: self.getSuperRes(self.input_file_name,  
+                    self.input_arr[0].text()))
+            self.sub_menu_options.addWidget(self.run_button)
+        
 
         return type 
 
 
     def getBinThres(self, inputImage, outputImage, lowerThres, upperThres,
                     outsideValue, insideValue):
-            
         binaryThreshold.arg_func(["../scripts/binaryThreshold.py", 
             str(inputImage), str(outputImage), str(lowerThres), str(upperThres), str(outsideValue), str(insideValue)])
         
         self.openImage(outputImage)
 
+    def getAtropos(self, inputImage, outputSeg, outputCSF, outputGM, outputWM):
+        args = ['../scripts/atropos.py', inputImage, outputSeg, outputCSF, outputGM,
+                outputWM]
+        atropos.arg_func(args)
+        self.openImage(outputSeg)
+
+    def getDeepAtropos(self, inputImage, outputSeg, outputBackground, outputCSF, outputGM, 
+                    outputWM, outputDeepGM, outputBrainStem, outputCerebellum):
+        args = ['../scripts/deepAtropos.py', inputImage, outputSeg, outputBackground, outputCSF, 
+                outputGM, outputWM, outputDeepGM, outputBrainStem, outputCerebellum]
+        deepAtropos.arg_func(args)
+        self.openImage(outputSeg)
+
+    def getBrainExtraction(self, inputImage, outputImage):
+        args = ['../scripts/brainExtraction.py', inputImage, outputImage]
+        brainExtraction.arg_func(args)
+        self.openImage(outputImage)
+
+    def getSuperRes(self, inputImage, outputImage):
+        args = ['../scripts/brainExtraction.py', inputImage, outputImage]
+        brainExtraction.arg_func(args)
+        self.openImage(outputImage)
 
 if __name__ == "__main__":
  

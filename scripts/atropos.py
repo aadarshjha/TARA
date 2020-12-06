@@ -15,11 +15,11 @@ def arg_func(args):
         print("Usage: " + sys.argv[0] + " <inputImage> <outputImage> <outputImage> <outputImage> <outputImage>")
         sys.exit(1)
 
-    inputImage = "../data/input/" + sys.argv[1]
-    segmentationOutput = "../data/results/" + sys.argv[2]
-    CSFOutput = "../data/results/" + sys.argv[3]
-    GMOutput = "../data/results/" + sys.argv[4]
-    WMOutput = "../data/results/" + sys.argv[5]
+    inputImage = sys.argv[1]
+    segmentationOutput = sys.argv[2]
+    CSFOutput = sys.argv[3]
+    GMOutput = sys.argv[4]
+    WMOutput = sys.argv[5]
 
     img = ants.image_read(inputImage)
     mask = ants.get_mask(img)
