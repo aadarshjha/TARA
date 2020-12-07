@@ -14,9 +14,9 @@ def arg_func(args):
         print("Usage: " + args[0] + " <FixedImage> <MovingImage> <outputImage> <transform>")
         sys.exit(1)
 
-    fixedImage = "../data/input/" + args[1]
-    movingImage = "../data/input/" + args[2]
-    outputImage = "../data/results/" + args[3]
+    fixedImage = args[1]
+    movingImage = args[2]
+    outputImage = args[3]
     transform = args[4]
 
     fixImg = ants.image_read(fixedImage)

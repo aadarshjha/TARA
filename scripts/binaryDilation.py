@@ -16,8 +16,8 @@ def arg_func(args):
 
 
     #Inputting the variables
-    inputImage = "../data/input" + args[1]
-    outputImage = "../data/results" + args[2]
+    inputImage = args[1]
+    outputImage = args[2]
     radius = int(args[3])
 
     PixelType = itk.UC
