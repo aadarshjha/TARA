@@ -522,8 +522,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             self.run_button = QtWidgets.QPushButton('Run Registration', self);
             self.run_button.clicked.connect(
-                lambda: self.getRegistration(
-                    self.input_arr[0].text(), self.input_arr[1].text(),
+                lambda: self.getRegistration(self.input_arr[0].text(), self.input_arr[1].text(),
                     self.input_arr[2].text(), self.input_arr[3].text()))
             self.sub_menu_options.addWidget(self.run_button)
 
