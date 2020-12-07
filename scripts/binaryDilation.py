@@ -32,7 +32,7 @@ def arg_func(args):
 
     #set kernal shape
     StructuringElementType = itk.FlatStructuringElement[dims]
-    structuringElement = StructuringElementType.Ball(radiusValue)
+    structuringElement = StructuringElementType.Ball(radius)
 
     #create dilation filter
     DilateFilterType = itk.BinaryDilateImageFilter[ImageType,
