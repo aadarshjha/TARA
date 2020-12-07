@@ -642,15 +642,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.openImage(outputImage)
 
     def getOtsuThreshold(self, inputImage, outputImage, numHist, numThresh, labelOffset):
-        binaryDilation.arg_func(['', inputImage, outputImage, numHist, numThresh, labelOffset])
+        otsuThreshold.arg_func(['', inputImage, outputImage, numHist, numThresh, labelOffset])
         self.openImage(outputImage)
 
     def getSobelEdgeDetection(self, inputImage, outputImage):
-        binaryDilation.arg_func(['', inputImage, outputImage])
+        sobelEdgeDetection.arg_func(['', inputImage, outputImage])
         self.openImage(outputImage)
 
     def getRegistration(self, fixedImage, movingImage, transform):
-        binaryDilation.arg_func(['', fixedImage, movingImage, transform])
+        registration.arg_func(['', fixedImage, movingImage, transform])
         self.openImage(outputImage)
 
     def getAtropos(self, inputImage, outputSeg, outputCSF, outputGM, outputWM):
