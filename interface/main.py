@@ -1,5 +1,4 @@
 import vtk
-
 from PyQt5 import QtCore, QtWidgets
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from PyQt5.QtWidgets import QFileDialog
@@ -13,9 +12,7 @@ import subprocess
 import sys
 
 import sys
-# insert at 1, 0 is the script path (or '' in REPL)
 sys.path.insert(1, '../scripts/')
-# put all the imports.
 import binaryThreshold
 import cannyEdgeDetection
 import atropos
@@ -33,7 +30,6 @@ import registration
 # import deepAtropos
 # import superResolution
 
-# Just importing all.
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
@@ -66,7 +62,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button3 = QtWidgets.QPushButton('Help', self)
         self.button1.clicked.connect(lambda: self.openFileNameDialog())
         self.button2.clicked.connect(lambda: self.printOut(self.button2.text()))
-        self.button2.clicked.connect(lambda: self.printOut(self.button3.text()))
+
+
+        self.button3.clicked.connect(lambda: self.popUp())
 
         self.menu_layout.addWidget(self.button1)
         self.menu_layout.addWidget(self.button2)
@@ -86,24 +84,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.cb = QComboBox()
         self.cb.addItem("Select Image Processing Algorithm")
-
-        # options.
-
-        # aadarsh
         self.cb.addItem("Binary Threshold")
         self.cb.addItem("Canny Edge Detection")
         self.cb.addItem("Clamp Image Filter")
         self.cb.addItem("Gaussian Smoothing")
-
-        # terry
         self.cb.addItem("Median Filter")
         self.cb.addItem("Binary Erosion")
         self.cb.addItem("Binary Dilation")
         self.cb.addItem("Otsu Threshold")
         self.cb.addItem("Sobel Edge Detection")
         self.cb.addItem("Registration")
-
-        # raahul.
         self.cb.addItem("Segmentation")
         self.cb.addItem("Brain Extraction")
         self.cb.addItem("Deep Segmentation")
@@ -152,7 +142,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.openImage(file_name)
 
     def printOut(self, msg):
+ 
         print(msg)
+
+    
+    def popUp(self): 
+        w1 = QLabel("WindowWindowWindowWindowWindowWindowWindowWindowWindowWindowWindowWindowWindowWindowWindowWindowWindowWindowWindow 1")
+        w1.show()
+        print("hello")
 
     def openImage(self, file_name):
         self.input_file_name = file_name
@@ -246,14 +243,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.iren.Initialize()
 
-    def pickBackend(self, type):
-        # we display a particular screen depending on the type of
-        # values that the user will give to us.
-
-        # for instance, in the case of binary thres, we take
-        # Ex Input: binaryThreshold.py 1000_3.nii.gz 1000_3_threshold.nii.gz 600 1500 0 1
-        # according to ashwin.
-
+    def pickBackend(self, type):   
         ## clearing the view:
         for layout in self.h_view_arr:
             while layout.count():
