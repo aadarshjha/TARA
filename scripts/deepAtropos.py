@@ -14,20 +14,20 @@ import antspynet
 
 def arg_func(args):
     #Make sure input is selected
-    if len(sys.argv) != 10:
-        print("Usage: " + sys.argv[0] + " <inputImage> <Segmentation>"
+    if len(args) != 10:
+        print("Usage: " + args[0] + " <inputImage> <Segmentation>"
               "<BackgroundOutput> <CSFOutput> <GMOutput> <WMOutput> <DeepGMOutput> <BrainStem> <Cerebellum>")
         sys.exit(1)
 
-    inputImage = sys.argv[1]
-    segmentationOutput = sys.argv[2]
-    BackgroundOutput = sys.argv[3]
-    CSFOutput = sys.argv[4]
-    GMOutput = sys.argv[5]
-    WMOutput = sys.argv[6]
-    DeepGMOutput = sys.argv[7]
-    BrainStemOutput = sys.argv[8]
-    CerebellumOutput = sys.argv[9]
+    inputImage = args[1]
+    segmentationOutput = args[2]
+    BackgroundOutput = args[3]
+    CSFOutput = args[4]
+    GMOutput = args[5]
+    WMOutput = args[6]
+    DeepGMOutput = args[7]
+    BrainStemOutput = args[8]
+    CerebellumOutput = args[9]
 
     image = ants.image_read(inputImage)
     flash = antspynet.utilities.deep_atropos(image, do_preprocessing=True, verbose=True)

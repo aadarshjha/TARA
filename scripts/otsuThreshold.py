@@ -10,17 +10,17 @@ import itk
 
 def arg_func(args):
     #Make sure input is selected
-    if len(sys.argv) != 6:
-        print("Usage: " + sys.argv[0] + " <inputImage> <outputImage> "
+    if len(args) != 6:
+        print("Usage: " + args[0] + " <inputImage> <outputImage> "
               "<numberOfHistogramBins> <numberOfThresholds> <labelOffset>")
         sys.exit(1)
 
     #Inputting the variables
-    inputImage = "../data/input/" + sys.argv[1]
-    outputImage = "../data/results/" + sys.argv[2]
-    numberOfHistogramBins = int(sys.argv[3])
-    numberOfThresholds = int(sys.argv[4])
-    labelOffset = int(sys.argv[5])
+    inputImage = "../data/input/" + args[1]
+    outputImage = "../data/results/" + args[2]
+    numberOfHistogramBins = int(args[3])
+    numberOfThresholds = int(args[4])
+    labelOffset = int(args[5])
 
     #set up a reader
     reader = itk.ImageFileReader.New(FileName=inputImage)

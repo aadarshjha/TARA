@@ -11,12 +11,12 @@ import antspynet
 
 def arg_func(args):
     #Make sure input is selected
-    if len(sys.argv) != 3:
-        print("Usage: " + sys.argv[0] + " <inputImage> <OutputImage>")
+    if len(args) != 3:
+        print("Usage: " + args[0] + " <inputImage> <OutputImage>")
         sys.exit(1)
 
-    inputImage = sys.argv[1]
-    outputImage = sys.argv[2]
+    inputImage = args[1]
+    outputImage = args[2]
 
     image = ants.image_read(inputImage)
     superRes = antspynet.utilities.mri_super_resolution(image)

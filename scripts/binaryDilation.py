@@ -10,15 +10,15 @@ import itk
 
 def arg_func(args):
     #Make sure input is selected
-    if len(sys.argv) != 4:
-        print("Usage: " + sys.argv[0] + " <inputImage> <outputImage> <radius>")
+    if len(args) != 4:
+        print("Usage: " + args[0] + " <inputImage> <outputImage> <radius>")
         sys.exit(1)
 
 
     #Inputting the variables
-    inputImage = "../data/input" + sys.argv[1]
-    outputImage = "../data/results" + sys.argv[2]
-    radius = int(sys.argv[3])
+    inputImage = "../data/input" + args[1]
+    outputImage = "../data/results" + args[2]
+    radius = int(args[3])
 
     PixelType = itk.UC
     dims = 3

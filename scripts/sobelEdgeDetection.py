@@ -10,13 +10,13 @@ import itk
 
 def arg_func(args):
     #Make sure input is selected
-    if len(sys.argv) != 3:
-        print("Usage: " + sys.argv[0] + " <inputImage> <outputImage> ")
+    if len(args) != 3:
+        print("Usage: " + args[0] + " <inputImage> <outputImage> ")
         sys.exit(1)
 
     #Inputting the variables
-    inputImage = "../data/input/" + sys.argv[1]
-    outputImage = "../data/results/" + sys.argv[2]
+    inputImage = "../data/input/" + args[1]
+    outputImage = "../data/results/" + args[2]
 
     InputPixelType = itk.F
     OutputPixelType = itk.UC

@@ -10,14 +10,14 @@ import ants
 
 def arg_func(args):
     #Make sure input is selected
-    if len(sys.argv) != 5:
-        print("Usage: " + sys.argv[0] + " <FixedImage> <MovingImage> <outputImage> <transform>")
+    if len(args) != 5:
+        print("Usage: " + args[0] + " <FixedImage> <MovingImage> <outputImage> <transform>")
         sys.exit(1)
 
-    fixedImage = "../data/input/" + sys.argv[1]
-    movingImage = "../data/input/" + sys.argv[2]
-    outputImage = "../data/results/" + sys.argv[3]
-    transform = sys.argv[4]
+    fixedImage = "../data/input/" + args[1]
+    movingImage = "../data/input/" + args[2]
+    outputImage = "../data/results/" + args[3]
+    transform = args[4]
 
     fixImg = ants.image_read(fixedImage)
     movImg = ants.image_read(movingImage)
