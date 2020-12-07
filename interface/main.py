@@ -10,42 +10,49 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5 import QtCore
 import subprocess
-import sys 
+import sys
 
 import sys
 # insert at 1, 0 is the script path (or '' in REPL)
 sys.path.insert(1, '../scripts/')
-# put all the imports. 
+# put all the imports.
 import binaryThreshold
 import cannyEdgeDetection
 import atropos
 import clampImageFilter
 import gaussianSmoothing
 
+import medianFilter
+import binaryErosion
+import binaryDilation
+import otsuThreshold
+import sobelEdgeDetection
+import registration
+
 # import brainExtraction
 # import deepAtropos
 # import superResolution
 
-# Just importing all. 
-from PyQt5.QtWidgets import * 
-from PyQt5.QtGui import * 
+# Just importing all.
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent = None):
-        
+
         QtWidgets.QMainWindow.__init__(self, parent)
         self.input_file_name = "../data/input/1000_3.nii.gz"
         self.renderers = []
         self.frame = QtWidgets.QFrame()
         self.setFixedHeight(520)
         self.setFixedWidth(900)
- 
+
         self.main_layout = QtWidgets.QVBoxLayout()
         self.h_view_arr = []
 
-        # Adding some text here: 
+        # Adding some text here:
         self.label= QLabel("TARA")
-        self.label.setFont(QFont('Arial', 30)) 
+        self.label.setFont(QFont('Arial', 30))
 
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.main_layout.addWidget(self.label)
@@ -54,7 +61,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menu_layout = QtWidgets.QHBoxLayout()
         self.button1 = QtWidgets.QPushButton('Open NIFTI', self)
         self.button2 = QtWidgets.QPushButton('Save NIFTI', self)
-        self.button3 = QtWidgets.QPushButton('Help', self); 
+        self.button3 = QtWidgets.QPushButton('Help', self);
         self.button1.clicked.connect(lambda: self.openFileNameDialog())
         self.button2.clicked.connect(lambda: self.printOut(self.button2.text()))
         self.button2.clicked.connect(lambda: self.printOut(self.button3.text()))
@@ -65,35 +72,37 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.main_layout.addLayout(self.menu_layout)
 
-        # VTK Widget, split the view. 
-        self.overall_layout = QtWidgets.QHBoxLayout(); 
+        # VTK Widget, split the view.
+        self.overall_layout = QtWidgets.QHBoxLayout();
         self.options_layout = QtWidgets.QVBoxLayout()
         self.sub_menu_options = QtWidgets.QVBoxLayout()
 
-        # getting optoins from the user: 
-        # we allow for access of: 
+        # getting optoins from the user:
+        # we allow for access of:
 
-        # creating a qt form: 
+        # creating a qt form:
 
         self.cb = QComboBox()
         self.cb.addItem("Select Image Processing Algorithm")
 
-        # options. 
+        # options.
 
-        # aadarsh   
-        self.cb.addItem("Binary Threshold")  
-        self.cb.addItem("Canny Edge Detection")  
-        self.cb.addItem("Clamp Image Filter")  
-        self.cb.addItem("Gaussian Smoothing")  
+        # aadarsh
+        self.cb.addItem("Binary Threshold")
+        self.cb.addItem("Canny Edge Detection")
+        self.cb.addItem("Clamp Image Filter")
+        self.cb.addItem("Gaussian Smoothing")
 
         # terry
-        self.cb.addItem("Median Filter")  
-        self.cb.addItem("Otsu Threshold")  
+        self.cb.addItem("Median Filter")
+        self.cb.addItem("Binary Erosion")
+        self.cb.addItem("Binary Dilation")
+        self.cb.addItem("Otsu Threshold")
         self.cb.addItem("Sobel Edge Detection")
         self.cb.addItem("Registration")
 
-        # raahul. 
-        self.cb.addItem("Segmentation")     
+        # raahul.
+        self.cb.addItem("Segmentation")
         self.cb.addItem("Brain Extraction")
         self.cb.addItem("Deep Segmentation")
         self.cb.addItem("Super Resolution")
@@ -101,28 +110,28 @@ class MainWindow(QtWidgets.QMainWindow):
         self.options_layout.addWidget(self.cb)
         self.options_layout.addWidget(self.button1)
 
-        # call back function: 
+        # call back function:
         self.cb.currentTextChanged.connect(self.pickBackend)
         self.vtkWidget = QVTKRenderWindowInteractor(self.frame)
-      
+
         self.overall_layout.addLayout(self.options_layout)
         self.main_layout.addLayout(self.overall_layout)
         self.options_layout.addLayout(self.sub_menu_options)
 
         self.overall_layout.addWidget(self.vtkWidget)
- 
+
         ren = vtk.vtkRenderer()
 
         self.renderers.append(ren)
         self.vtkWidget.GetRenderWindow().AddRenderer(ren)
         self.iren = self.vtkWidget.GetRenderWindow().GetInteractor()
- 
+
         style = vtk.vtkInteractorStyleImage()
         style.SetInteractionModeToImage3D()
         self.iren.SetInteractorStyle(style)
 
         ren.ResetCamera()
- 
+
         self.frame.setLayout(self.main_layout)
         self.setCentralWidget(self.frame)
 
@@ -132,9 +141,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def openFileNameDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        file_name, _ = QFileDialog.getOpenFileName(self, 
-            "QFileDialog.getOpenFileName()", 
-            "","NIFTI files (*.nii, *.nii.gz)", 
+        file_name, _ = QFileDialog.getOpenFileName(self,
+            "QFileDialog.getOpenFileName()",
+            "","NIFTI files (*.nii, *.nii.gz)",
             options=options)
 
         if file_name:
@@ -169,7 +178,7 @@ class MainWindow(QtWidgets.QMainWindow):
         scalarRange = reslice.GetOutput().GetScalarRange()
         extent = reslice.GetOutput().GetExtent()
 
-    
+
         viewport = [[0.0, 0.0, 0.33, 1.0],
                     [0.33, 0.0, 0.67, 1.0],
                     [0.67, 0.0, 1.0, 1.0]]
@@ -234,19 +243,19 @@ class MainWindow(QtWidgets.QMainWindow):
 
         renWin.Render()
         self.iren.Start()
-            
+
 
         self.iren.Initialize()
-    
+
     def pickBackend(self, type):
-        # we display a particular screen depending on the type of 
-        # values that the user will give to us. 
+        # we display a particular screen depending on the type of
+        # values that the user will give to us.
 
         # for instance, in the case of binary thres, we take
         # Ex Input: binaryThreshold.py 1000_3.nii.gz 1000_3_threshold.nii.gz 600 1500 0 1
-        # according to ashwin. 
+        # according to ashwin.
 
-        ## clearing the view: 
+        ## clearing the view:
         for layout in self.h_view_arr:
             while layout.count():
                 child = layout.takeAt(0)
@@ -256,14 +265,14 @@ class MainWindow(QtWidgets.QMainWindow):
         while self.sub_menu_options.count():
             child = self.sub_menu_options.takeAt(0)
             if child.widget():
-                child.widget().deleteLater()                
+                child.widget().deleteLater()
 
         self.h_view_arr = []
         self.label_arr = []
         self.input_arr = []
 
         if type == "Binary Threshold":
-            self.button3 = QtWidgets.QPushButton('Run Binary Threshold', self); 
+            self.button3 = QtWidgets.QPushButton('Run Binary Threshold', self);
 
             self.justify_view1 = QtWidgets.QHBoxLayout()
 
@@ -280,19 +289,19 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.h_view_arr[i].addWidget(self.label_arr[i])
                 self.h_view_arr[i].addWidget(self.input_arr[i])
                 self.sub_menu_options.addLayout(self.h_view_arr[i])
-        
-            self.button3.clicked.connect(lambda: self.getBinThres(self.input_file_name, (self.input_arr[0].text()), self.input_arr[1].text(), 
+
+            self.button3.clicked.connect(lambda: self.getBinThres(self.input_file_name, (self.input_arr[0].text()), self.input_arr[1].text(),
                                                                   self.input_arr[2].text(), self.input_arr[3].text(), self.input_arr[4].text()))
-                                                
+
             self.sub_menu_options.addWidget(self.button3)
 
-        
+
         elif type == "Canny Edge Detection":
-            self.button3 = QtWidgets.QPushButton('Run Canny Edge Detection', self); 
+            self.button3 = QtWidgets.QPushButton('Run Canny Edge Detection', self);
             self.justify_view1 = QtWidgets.QHBoxLayout()
             self.h_view_arr = []
             self.label_arr = []
-            self.text_arr = ["Ouput Image Name:", "Variance:", "Lower Threshold:", "Upper Threshold:"]
+            self.text_arr = ["Output Image Name:", "Variance:", "Lower Threshold:", "Upper Threshold:"]
             self.default_arr = ["../data/results/1000_3_threshold.nii.gz","0.5", "50", "200"]
             self.input_arr = []
             for i in range(len(self.text_arr)):
@@ -304,22 +313,22 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.h_view_arr[i].addWidget(self.input_arr[i])
                 self.sub_menu_options.addLayout(self.h_view_arr[i])
             self.button3.clicked.connect(lambda: self.getCanny(
-                                                    self.input_file_name, self.input_arr[0].text(), self.input_arr[1].text(), 
+                                                    self.input_file_name, self.input_arr[0].text(), self.input_arr[1].text(),
                                                     self.input_arr[2].text(), self.input_arr[3].text()
                                                 )
                                         )
-                                                
+
             self.sub_menu_options.addWidget(self.button3)
 
         elif type == "Clamp Image Filter":
-            self.button3 = QtWidgets.QPushButton('Run Clamp Image Filter', self); 
+            self.button3 = QtWidgets.QPushButton('Run Clamp Image Filter', self);
             self.justify_view1 = QtWidgets.QHBoxLayout()
             self.h_view_arr = []
             self.label_arr = []
-            
+
             # print("Usage: " + args[0] + " <inputImage> <outputImage> <lowerBoundOutput> <UpperBoundOutput")
 
-            self.text_arr = ["Ouput Image Name:", "Lower Bound Output:", "Upper Bound Output:"]
+            self.text_arr = ["Output Image Name:", "Lower Bound Output:", "Upper Bound Output:"]
             self.default_arr = ["../data/results/1000_3_threshold.nii.gz", "0", "5000"]
             self.input_arr = []
             for i in range(len(self.text_arr)):
@@ -331,22 +340,22 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.h_view_arr[i].addWidget(self.input_arr[i])
                 self.sub_menu_options.addLayout(self.h_view_arr[i])
             self.button3.clicked.connect(lambda: self.getClamp(
-                                                    self.input_file_name, self.input_arr[0].text(), self.input_arr[1].text(), 
+                                                    self.input_file_name, self.input_arr[0].text(), self.input_arr[1].text(),
                                                     self.input_arr[2].text()
                                                 )
                                         )
-                                                
+
             self.sub_menu_options.addWidget(self.button3)
 
         elif type == "Gaussian Smoothing":
-            self.button3 = QtWidgets.QPushButton('Run Gaussian Smoothing', self); 
+            self.button3 = QtWidgets.QPushButton('Run Gaussian Smoothing', self);
             self.justify_view1 = QtWidgets.QHBoxLayout()
             self.h_view_arr = []
             self.label_arr = []
 
             #         print("Usage: " + args[0] + " <inputImage> <outputImage> <sigma>")
 
-            self.text_arr = ["Ouput Image Name:", "Sigma:"]
+            self.text_arr = ["Output Image Name:", "Sigma:"]
             self.default_arr = ["../data/results/1000_3_threshold.nii.gz", "2.5"]
             self.input_arr = []
             for i in range(len(self.text_arr)):
@@ -363,11 +372,11 @@ class MainWindow(QtWidgets.QMainWindow):
                                                     self.input_arr[1].text()
                                                 )
                                         )
-                                                
+
             self.sub_menu_options.addWidget(self.button3)
 
         elif type == "Segmentation":
-            self.text_arr = ['Segmetnation Output:', 'CSF Output:', 'GM Output',
+            self.text_arr = ['Segmentation Output:', 'CSF Output:', 'GM Output',
                             'WM Output']
             self.default_arr = ['../data/results/1000_3_atroposSegmentation.nii.gz',
                                 '../data/results/1000_3_atroposCSF.nii.gz',
@@ -384,16 +393,142 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.sub_menu_options.addLayout(self.h_view_arr[i])
 
 
-            self.run_button = QtWidgets.QPushButton('Run Atropos 3-tissue', self); 
+            self.run_button = QtWidgets.QPushButton('Run Atropos 3-tissue', self);
             self.run_button.clicked.connect(
-                lambda: self.getAtropos(self.input_file_name,  
-                    self.input_arr[0].text(), self.input_arr[1].text(), 
+                lambda: self.getAtropos(self.input_file_name,
+                    self.input_arr[0].text(), self.input_arr[1].text(),
                     self.input_arr[2].text(), self.input_arr[3].text()))
             self.sub_menu_options.addWidget(self.run_button)
 
+        elif type == "Median Filter":
+            self.text_arr = ['Output File:', 'Radius:']
+            self.default_arr = ['../data/results/1000_3_medianFilter.nii.gz', '5',]
+
+            for i in range(len(self.text_arr)):
+                self.h_view_arr.append(QtWidgets.QHBoxLayout())
+                self.label_arr.append(QLabel(self))
+                self.label_arr[i].setText(self.text_arr[i])
+                self.input_arr.append(QLineEdit(self.default_arr[i]))
+                self.h_view_arr[i].addWidget(self.label_arr[i])
+                self.h_view_arr[i].addWidget(self.input_arr[i])
+                self.sub_menu_options.addLayout(self.h_view_arr[i])
+
+
+            self.run_button = QtWidgets.QPushButton('Run Median Filter', self);
+            self.run_button.clicked.connect(
+                lambda: self.getMedianFilter(self.input_file_name,
+                    self.input_arr[0].text(), self.input_arr[1].text()))
+            self.sub_menu_options.addWidget(self.run_button)
+
+        elif type == "Binary Erosion":
+            self.text_arr = ['Output File:', 'Radius:']
+            self.default_arr = ['../data/results/1000_3_erosion.nii.gz', '5',]
+
+            for i in range(len(self.text_arr)):
+                self.h_view_arr.append(QtWidgets.QHBoxLayout())
+                self.label_arr.append(QLabel(self))
+                self.label_arr[i].setText(self.text_arr[i])
+                self.input_arr.append(QLineEdit(self.default_arr[i]))
+                self.h_view_arr[i].addWidget(self.label_arr[i])
+                self.h_view_arr[i].addWidget(self.input_arr[i])
+                self.sub_menu_options.addLayout(self.h_view_arr[i])
+
+
+            self.run_button = QtWidgets.QPushButton('Run Binary Erosion', self);
+            self.run_button.clicked.connect(
+                lambda: self.getBinaryErosion(self.input_file_name,
+                    self.input_arr[0].text(), self.input_arr[1].text()))
+            self.sub_menu_options.addWidget(self.run_button)
+
+        elif type == "Binary Dilation":
+            self.text_arr = ['Output File:', 'Radius:']
+            self.default_arr = ['../data/results/1000_3_dilation.nii.gz', '5',]
+
+            for i in range(len(self.text_arr)):
+                self.h_view_arr.append(QtWidgets.QHBoxLayout())
+                self.label_arr.append(QLabel(self))
+                self.label_arr[i].setText(self.text_arr[i])
+                self.input_arr.append(QLineEdit(self.default_arr[i]))
+                self.h_view_arr[i].addWidget(self.label_arr[i])
+                self.h_view_arr[i].addWidget(self.input_arr[i])
+                self.sub_menu_options.addLayout(self.h_view_arr[i])
+
+
+            self.run_button = QtWidgets.QPushButton('Run Binary Dilation', self);
+            self.run_button.clicked.connect(
+                lambda: self.getBinaryDilation(self.input_file_name,
+                    self.input_arr[0].text(), self.input_arr[1].text()))
+            self.sub_menu_options.addWidget(self.run_button)
+
+        elif type == "Otsu Threshold":
+            self.text_arr = ['Output File:', '# of Histogram Bins:',
+                            '# of Thresholds', "Label Offset"]
+            self.default_arr = ['../data/results/1000_3_otsuThreshold.nii.gz',
+                                '10', '2', '2']
+
+            for i in range(len(self.text_arr)):
+                self.h_view_arr.append(QtWidgets.QHBoxLayout())
+                self.label_arr.append(QLabel(self))
+                self.label_arr[i].setText(self.text_arr[i])
+                self.input_arr.append(QLineEdit(self.default_arr[i]))
+                self.h_view_arr[i].addWidget(self.label_arr[i])
+                self.h_view_arr[i].addWidget(self.input_arr[i])
+                self.sub_menu_options.addLayout(self.h_view_arr[i])
+
+
+            self.run_button = QtWidgets.QPushButton('Run Otsu Threshold', self);
+            self.run_button.clicked.connect(
+                lambda: self.getOtsuThreshold(self.input_file_name,
+                    self.input_arr[0].text(), self.input_arr[1].text(),
+                    self.input_arr[2].text(), self.input_arr[3].text()))
+            self.sub_menu_options.addWidget(self.run_button)
+
+        elif type == "Sobel Edge Detection":
+            self.text_arr = ['Output File:']
+            self.default_arr = ['../data/results/1000_3_sobelEdgeDetection.nii.gz']
+
+            for i in range(len(self.text_arr)):
+                self.h_view_arr.append(QtWidgets.QHBoxLayout())
+                self.label_arr.append(QLabel(self))
+                self.label_arr[i].setText(self.text_arr[i])
+                self.input_arr.append(QLineEdit(self.default_arr[i]))
+                self.h_view_arr[i].addWidget(self.label_arr[i])
+                self.h_view_arr[i].addWidget(self.input_arr[i])
+                self.sub_menu_options.addLayout(self.h_view_arr[i])
+
+
+            self.run_button = QtWidgets.QPushButton('Run Sobel Edge Detection', self);
+            self.run_button.clicked.connect(
+                lambda: self.getSobelEdgeDetection(self.input_file_name,
+                    self.input_arr[0].text()))
+            self.sub_menu_options.addWidget(self.run_button)
+
+        elif type == "Registration":
+            self.text_arr = ['Fixed Image:', 'Moving Image:', 'Output File:', 'Transform:']
+            self.default_arr = ['../data/input/SubjectB_T1.nrrd',
+                                '../data/input/SubjectA_T1.nrrd',
+                                '../data/results/SubjectA2B_Syn.nii.gz',
+                                'Affine']
+
+            for i in range(len(self.text_arr)):
+                self.h_view_arr.append(QtWidgets.QHBoxLayout())
+                self.label_arr.append(QLabel(self))
+                self.label_arr[i].setText(self.text_arr[i])
+                self.input_arr.append(QLineEdit(self.default_arr[i]))
+                self.h_view_arr[i].addWidget(self.label_arr[i])
+                self.h_view_arr[i].addWidget(self.input_arr[i])
+                self.sub_menu_options.addLayout(self.h_view_arr[i])
+
+
+            self.run_button = QtWidgets.QPushButton('Run Registration', self);
+            self.run_button.clicked.connect(
+                lambda: self.getRegistration(self.input_file_name,
+                    self.input_arr[0].text(), self.input_arr[1].text(),
+                    self.input_arr[2].text()))
+            self.sub_menu_options.addWidget(self.run_button)
 
         #### EXPERIMENTAL #### CONSIDER REMOVING ####
-            
+
         # elif type == "Brain Extraction":
         #     self.text_arr = ['Output:']
         #     self.default_arr = ['../data/results/SubjectA_T1_brainExtraction.nii.gz']
@@ -408,15 +543,15 @@ class MainWindow(QtWidgets.QMainWindow):
         #         self.sub_menu_options.addLayout(self.h_view_arr[i])
 
 
-        #     self.run_button = QtWidgets.QPushButton('Run Brain Extraction', self); 
+        #     self.run_button = QtWidgets.QPushButton('Run Brain Extraction', self);
         #     self.run_button.clicked.connect(
-        #         lambda: self.getBrainExtraction(self.input_file_name,  
+        #         lambda: self.getBrainExtraction(self.input_file_name,
         #             self.input_arr[0].text()))
         #     self.sub_menu_options.addWidget(self.run_button)
 
         # elif type == "Deep Segmentation":
-        #     self.text_arr = ['Segmentation Output:', 'Background Output:', 
-        #                     'CSF Output:', 'GM Output:', 'WM Output:', 
+        #     self.text_arr = ['Segmentation Output:', 'Background Output:',
+        #                     'CSF Output:', 'GM Output:', 'WM Output:',
         #                     'Deep GM Output:', 'Brain Stem Output:',
         #                     'Cerebellum Output:']
         #     self.default_arr = ['../data/results/1000_3_deepAtropos.nii.gz',
@@ -438,10 +573,10 @@ class MainWindow(QtWidgets.QMainWindow):
         #         self.sub_menu_options.addLayout(self.h_view_arr[i])
 
 
-        #     self.run_button = QtWidgets.QPushButton('Run Atropos 6-tissue', self); 
+        #     self.run_button = QtWidgets.QPushButton('Run Atropos 6-tissue', self);
         #     self.run_button.clicked.connect(
-        #         lambda: self.getDeepAtropos(self.input_file_name,  
-        #             self.input_arr[0].text(), self.input_arr[1].text(), 
+        #         lambda: self.getDeepAtropos(self.input_file_name,
+        #             self.input_arr[0].text(), self.input_arr[1].text(),
         #             self.input_arr[2].text(), self.input_arr[3].text(),
         #             self.input_arr[4].text(), self.input_arr[5].text(),
         #             self.input_arr[6].text(), self.input_arr[7].text()))
@@ -461,37 +596,61 @@ class MainWindow(QtWidgets.QMainWindow):
         #         self.sub_menu_options.addLayout(self.h_view_arr[i])
 
 
-        #     self.run_button = QtWidgets.QPushButton('Run Super Resolution', self); 
+        #     self.run_button = QtWidgets.QPushButton('Run Super Resolution', self);
         #     self.run_button.clicked.connect(
-        #         lambda: self.getSuperRes(self.input_file_name,  
+        #         lambda: self.getSuperRes(self.input_file_name,
         #             self.input_arr[0].text()))
         #     self.sub_menu_options.addWidget(self.run_button)
-        
 
-        return type 
+
+        return type
 
 
     def getBinThres(self, inputImage, outputImage, lowerThres, upperThres,
                     outsideValue, insideValue):
-        binaryThreshold.arg_func(["../scripts/binaryThreshold.py", 
+        binaryThreshold.arg_func(["../scripts/binaryThreshold.py",
             str(inputImage), str(outputImage), str(lowerThres), str(upperThres), str(outsideValue), str(insideValue)])
-        
+
         self.openImage(outputImage)
 
     def getCanny(self, inputImage, outputImage, variance, lowerThres, upperThres):
-        cannyEdgeDetection.arg_func(["../scripts/cannyEdgeDetection.py", 
+        cannyEdgeDetection.arg_func(["../scripts/cannyEdgeDetection.py",
             str(inputImage), str(outputImage), str(variance), str(lowerThres), str(upperThres)])
         self.openImage(outputImage)
-    
+
     def getClamp(self, inputImage, outputImage, lowerBound, upperBound):
-        clampImageFilter.arg_func(["../scripts/clampImageFilter.py", 
+        clampImageFilter.arg_func(["../scripts/clampImageFilter.py",
             str(inputImage), str(outputImage), str(lowerBound), str(upperBound)])
         self.openImage(outputImage)
 
     def getGauss(self, inputImage, outputImage, sigma):
-        gaussianSmoothing.arg_func(["../scripts/gaussianSmoothing.py", 
+        gaussianSmoothing.arg_func(["../scripts/gaussianSmoothing.py",
             str(inputImage), str(outputImage), str(sigma)])
-            
+
+        self.openImage(outputImage)
+
+    def getMedianFilter(self, inputImage, outputImage, radius):
+        medianFilter.arg_func(['', inputImage, outputImage, radius])
+        self.openImage(outputImage)
+
+    def getBinaryErosion(self, inputImage, outputImage, radius):
+        binaryErosion.arg_func(['', inputImage, outputImage, radius])
+        self.openImage(outputImage)
+
+    def getBinaryDilation(self, inputImage, outputImage, radius):
+        binaryDilation.arg_func(['', inputImage, outputImage, radius])
+        self.openImage(outputImage)
+
+    def getOtsuThreshold(self, inputImage, outputImage, numHist, numThresh, labelOffset):
+        binaryDilation.arg_func(['', inputImage, outputImage, numHist, numThresh, labelOffset])
+        self.openImage(outputImage)
+
+    def getSobelEdgeDetection(self, inputImage, outputImage):
+        binaryDilation.arg_func(['', inputImage, outputImage])
+        self.openImage(outputImage)
+
+    def getRegistration(self, fixedImage, movingImage, transform):
+        binaryDilation.arg_func(['', fixedImage, movingImage, transform])
         self.openImage(outputImage)
 
     def getAtropos(self, inputImage, outputSeg, outputCSF, outputGM, outputWM):
@@ -500,9 +659,9 @@ class MainWindow(QtWidgets.QMainWindow):
         atropos.arg_func(args)
         self.openImage(outputSeg)
 
-    def getDeepAtropos(self, inputImage, outputSeg, outputBackground, outputCSF, outputGM, 
+    def getDeepAtropos(self, inputImage, outputSeg, outputBackground, outputCSF, outputGM,
                     outputWM, outputDeepGM, outputBrainStem, outputCerebellum):
-        args = ['../scripts/deepAtropos.py', inputImage, outputSeg, outputBackground, outputCSF, 
+        args = ['../scripts/deepAtropos.py', inputImage, outputSeg, outputBackground, outputCSF,
                 outputGM, outputWM, outputDeepGM, outputBrainStem, outputCerebellum]
         deepAtropos.arg_func(args)
         self.openImage(outputSeg)
@@ -518,9 +677,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.openImage(outputImage)
 
 if __name__ == "__main__":
- 
+
     app = QtWidgets.QApplication(sys.argv)
- 
+
     window = MainWindow()
- 
+
     sys.exit(app.exec_())

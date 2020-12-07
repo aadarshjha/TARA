@@ -1,7 +1,7 @@
 '''
 Params: Input file name, Output file name, radius
 File Description: Performs Binary Dilation, expands white regions
-Ex Input: medianFilter.py 1000_3.nii.gz 1000_3_erosion.nii.gz 5
+Ex Input: medianFilter.py 1000_3.nii.gz 1000_3_dilation.nii.gz 5
 '''
 
 import sys
