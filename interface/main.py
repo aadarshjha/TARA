@@ -649,8 +649,8 @@ class MainWindow(QtWidgets.QMainWindow):
         sobelEdgeDetection.arg_func(['', inputImage, outputImage])
         self.openImage(outputImage)
 
-    def getRegistration(self, fixedImage, movingImage, transform):
-        registration.arg_func(['', fixedImage, movingImage, transform])
+    def getRegistration(self, fixedImage, movingImage, outputImage, transform):
+        registration.arg_func(['', fixedImage, movingImage, outputImage, transform])
         self.openImage(outputImage)
 
     def getAtropos(self, inputImage, outputSeg, outputCSF, outputGM, outputWM):
