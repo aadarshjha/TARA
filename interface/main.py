@@ -62,7 +62,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.button3 = QtWidgets.QPushButton('Help', self)
         self.button1.clicked.connect(lambda: self.openFileNameDialog())
         self.button2.clicked.connect(lambda: self.printOut(self.button2.text()))
-        self.button2.clicked.connect(lambda: self.printOut(self.button3.text()))
+
+
+        self.button3.clicked.connect(lambda: self.popUp())
 
         self.menu_layout.addWidget(self.button1)
         self.menu_layout.addWidget(self.button2)
@@ -140,7 +142,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.openImage(file_name)
 
     def printOut(self, msg):
+ 
         print(msg)
+
+    
+    def popUp(self): 
+        w1 = QLabel("WindowWindowWindowWindowWindowWindowWindowWindowWindowWindowWindowWindowWindowWindowWindowWindowWindowWindowWindow 1")
+        w1.show()
+        print("hello")
 
     def openImage(self, file_name):
         self.input_file_name = file_name
