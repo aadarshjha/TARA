@@ -1,12 +1,16 @@
-<div style="text-align:center">
-    <img src = "../assets/img.jpg">
-</div>
+# TARA 
 
 CS 8395 Final Project
 
 > A fully-integrated, end-to-end visualization and analysis application to ascertain preliminary quantification of medical imaging data, in an intuitive and abstracted manner so as to be used by a wide audience, regardless of pre-existing knowledge with respect to medical imaging. 
 
 Aadarsh Jha, Ashwin Kumar, Terry Luo, Raahul Natarrajan
+
+<img align = "center" src = "assets/img2.png"/>
+<em><strong>Figure 1:</strong> The regular interface of TARA.</em>
+
+<img align = "center" src = "assets/img3.png"/>
+<em><strong>Figure 2:</strong> An example of filtering in TARA.</em>
 
 ## I. Background Information
 
@@ -49,6 +53,3 @@ We plan on following the below timeline so as to maintain regular milestones and
 5. 11/10: Migrate ITK functionality to application, which will primarily compose of our “back-end”. 
 6. 11/10: Add instructions, educational tidbits, and complete “front-end” of the application. 
 Post-Thanksgiving: Project completion, which includes a fully-integrated application that receives and sends data, and is able to parse through results and visualize it to the user. We will primarily be testing our application in this part of the project timeline. 
-
-
-
