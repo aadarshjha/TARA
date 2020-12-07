@@ -238,11 +238,6 @@ class MainWindow(QtWidgets.QMainWindow):
             camera.ParallelProjectionOn()
             camera.SetParallelScale(maxdim)
 
-        if (imageIs3D):
-            renWin.SetSize(1000, 500)
-        else:
-            renWin.SetSize(400, 400)
-
         renWin.Render()
         self.iren.Start()
 
