@@ -524,7 +524,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.run_button.clicked.connect(
                 lambda: self.getRegistration(self.input_file_name,
                     self.input_arr[0].text(), self.input_arr[1].text(),
-                    self.input_arr[2].text()))
+                    self.input_arr[2].text(), self.input_arr[3].text()))
             self.sub_menu_options.addWidget(self.run_button)
 
         #### EXPERIMENTAL #### CONSIDER REMOVING ####
