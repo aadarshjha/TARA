@@ -37,8 +37,6 @@ import registration
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
-import fnmatch
-
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent = None):
 
@@ -159,16 +157,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def openImage(self, file_name):
         self.input_file_name = file_name
 
-        if fnmatch.fnmatch(file_name, '*.nii') or fnmatch.fnmatch(file_name, '*.nii.gz'):
-            reader = vtk.vtkNIFTIImageReader()
-            reader.SetFileName(file_name)
-
-        elif:
-            reader = vtk.vtkNrrdReader()
-            reader.SetFileName(file_name)
-
-        else:
-            return
+        reader = vtk.vtkNIFTIImageReader()
+        reader.SetFileName(file_name)
         
         reader.Update()
 
@@ -544,8 +534,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         elif type == "Registration":
             self.text_arr = ['Fixed Image:', 'Moving Image:', 'Output File:', 'Transform:']
-            self.default_arr = ['../data/input/SubjectB_T1.nrrd',
-                                '../data/input/SubjectA_T1.nrrd',
+            self.default_arr = ['../data/input/SubjectB_T1.nii.gz',
+                                '../data/input/SubjectA_T1.nii.gz',
                                 '../data/results/SubjectA2B_Affine.nii.gz',
                                 'Affine']
 
