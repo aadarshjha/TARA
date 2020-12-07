@@ -44,8 +44,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.input_file_name = "../data/input/1000_3.nii.gz"
         self.renderers = []
         self.frame = QtWidgets.QFrame()
-        self.setFixedHeight(520)
-        self.setFixedWidth(900)
+        # self.setFixedHeight(520)
+        # self.setFixedWidth(1300)
+        self.setMinimumHeight(520)
+        self.setMinimumWidth(1300)
 
         self.main_layout = QtWidgets.QVBoxLayout()
         self.h_view_arr = []
@@ -61,7 +63,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menu_layout = QtWidgets.QHBoxLayout()
         self.button1 = QtWidgets.QPushButton('Open NIFTI', self)
         self.button2 = QtWidgets.QPushButton('Save NIFTI', self)
-        self.button3 = QtWidgets.QPushButton('Help', self);
+        self.button3 = QtWidgets.QPushButton('Help', self)
         self.button1.clicked.connect(lambda: self.openFileNameDialog())
         self.button2.clicked.connect(lambda: self.printOut(self.button2.text()))
         self.button2.clicked.connect(lambda: self.printOut(self.button3.text()))
@@ -73,7 +75,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.main_layout.addLayout(self.menu_layout)
 
         # VTK Widget, split the view.
-        self.overall_layout = QtWidgets.QHBoxLayout();
+        self.overall_layout = QtWidgets.QHBoxLayout()
         self.options_layout = QtWidgets.QVBoxLayout()
         self.sub_menu_options = QtWidgets.QVBoxLayout()
 
@@ -237,7 +239,7 @@ class MainWindow(QtWidgets.QMainWindow):
             camera.SetParallelScale(maxdim)
 
         if (imageIs3D):
-            renWin.SetSize(850, 500)
+            renWin.SetSize(1000, 500)
         else:
             renWin.SetSize(400, 400)
 
@@ -271,6 +273,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_arr = []
         self.input_arr = []
 
+        FIXED_WIDTH = 150
+        FIXED_HEIGHT = 20
+
         if type == "Binary Threshold":
             self.button3 = QtWidgets.QPushButton('Run Binary Threshold', self);
 
@@ -289,6 +294,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.h_view_arr[i].addWidget(self.label_arr[i])
                 self.h_view_arr[i].addWidget(self.input_arr[i])
                 self.sub_menu_options.addLayout(self.h_view_arr[i])
+
+                self.input_arr[i].setFixedSize(FIXED_WIDTH, FIXED_HEIGHT)
+                self.label_arr[i].setFixedSize(FIXED_WIDTH, FIXED_HEIGHT)
 
             self.button3.clicked.connect(lambda: self.getBinThres(self.input_file_name, (self.input_arr[0].text()), self.input_arr[1].text(),
                                                                   self.input_arr[2].text(), self.input_arr[3].text(), self.input_arr[4].text()))
@@ -312,6 +320,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.h_view_arr[i].addWidget(self.label_arr[i])
                 self.h_view_arr[i].addWidget(self.input_arr[i])
                 self.sub_menu_options.addLayout(self.h_view_arr[i])
+
+                self.input_arr[i].setFixedSize(FIXED_WIDTH, FIXED_HEIGHT)
+                self.label_arr[i].setFixedSize(FIXED_WIDTH, FIXED_HEIGHT)
+
             self.button3.clicked.connect(lambda: self.getCanny(
                                                     self.input_file_name, self.input_arr[0].text(), self.input_arr[1].text(),
                                                     self.input_arr[2].text(), self.input_arr[3].text()
@@ -339,6 +351,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.h_view_arr[i].addWidget(self.label_arr[i])
                 self.h_view_arr[i].addWidget(self.input_arr[i])
                 self.sub_menu_options.addLayout(self.h_view_arr[i])
+
+                self.input_arr[i].setFixedSize(FIXED_WIDTH, FIXED_HEIGHT)
+                self.label_arr[i].setFixedSize(FIXED_WIDTH, FIXED_HEIGHT)
+
             self.button3.clicked.connect(lambda: self.getClamp(
                                                     self.input_file_name, self.input_arr[0].text(), self.input_arr[1].text(),
                                                     self.input_arr[2].text()
@@ -366,6 +382,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.h_view_arr[i].addWidget(self.label_arr[i])
                 self.h_view_arr[i].addWidget(self.input_arr[i])
                 self.sub_menu_options.addLayout(self.h_view_arr[i])
+
+                self.input_arr[i].setFixedSize(FIXED_WIDTH, FIXED_HEIGHT)
+                self.label_arr[i].setFixedSize(FIXED_WIDTH, FIXED_HEIGHT)
+
             self.button3.clicked.connect(lambda: self.getGauss(
                                                     self.input_file_name,
                                                     self.input_arr[0].text(),
@@ -392,6 +412,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.h_view_arr[i].addWidget(self.input_arr[i])
                 self.sub_menu_options.addLayout(self.h_view_arr[i])
 
+                self.input_arr[i].setFixedSize(100, 20)
+                self.label_arr[i].setFixedSize(100, 20)
 
             self.run_button = QtWidgets.QPushButton('Run Atropos 3-tissue', self);
             self.run_button.clicked.connect(
@@ -413,6 +435,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.h_view_arr[i].addWidget(self.input_arr[i])
                 self.sub_menu_options.addLayout(self.h_view_arr[i])
 
+                self.input_arr[i].setFixedSize(FIXED_WIDTH, FIXED_HEIGHT)
+                self.label_arr[i].setFixedSize(FIXED_WIDTH, FIXED_HEIGHT)
 
             self.run_button = QtWidgets.QPushButton('Run Median Filter', self);
             self.run_button.clicked.connect(
@@ -433,6 +457,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.h_view_arr[i].addWidget(self.input_arr[i])
                 self.sub_menu_options.addLayout(self.h_view_arr[i])
 
+                self.input_arr[i].setFixedSize(FIXED_WIDTH, FIXED_HEIGHT)
+                self.label_arr[i].setFixedSize(FIXED_WIDTH, FIXED_HEIGHT)
 
             self.run_button = QtWidgets.QPushButton('Run Binary Erosion', self);
             self.run_button.clicked.connect(
@@ -453,6 +479,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.h_view_arr[i].addWidget(self.input_arr[i])
                 self.sub_menu_options.addLayout(self.h_view_arr[i])
 
+                self.input_arr[i].setFixedSize(FIXED_WIDTH, FIXED_HEIGHT)
+                self.label_arr[i].setFixedSize(FIXED_WIDTH, FIXED_HEIGHT)
 
             self.run_button = QtWidgets.QPushButton('Run Binary Dilation', self);
             self.run_button.clicked.connect(
@@ -475,6 +503,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.h_view_arr[i].addWidget(self.input_arr[i])
                 self.sub_menu_options.addLayout(self.h_view_arr[i])
 
+                self.input_arr[i].setFixedSize(FIXED_WIDTH, FIXED_HEIGHT)
+                self.label_arr[i].setFixedSize(FIXED_WIDTH, FIXED_HEIGHT)
 
             self.run_button = QtWidgets.QPushButton('Run Otsu Threshold', self);
             self.run_button.clicked.connect(
@@ -496,6 +526,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.h_view_arr[i].addWidget(self.input_arr[i])
                 self.sub_menu_options.addLayout(self.h_view_arr[i])
 
+                self.input_arr[i].setFixedSize(FIXED_WIDTH, FIXED_HEIGHT)
+                self.label_arr[i].setFixedSize(FIXED_WIDTH, FIXED_HEIGHT)
 
             self.run_button = QtWidgets.QPushButton('Run Sobel Edge Detection', self);
             self.run_button.clicked.connect(
@@ -519,6 +551,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.h_view_arr[i].addWidget(self.input_arr[i])
                 self.sub_menu_options.addLayout(self.h_view_arr[i])
 
+                self.input_arr[i].setFixedSize(100, 20)
+                self.label_arr[i].setFixedSize(100, 20)
 
             self.run_button = QtWidgets.QPushButton('Run Registration', self);
             self.run_button.clicked.connect(
