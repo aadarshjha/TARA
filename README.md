@@ -1,4 +1,6 @@
-# TARA
+<div style="text-align:center">
+    <img src = "../assets/img.jpg">
+</div>
 
 CS 8395 Final Project
 
