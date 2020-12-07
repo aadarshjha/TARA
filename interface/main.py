@@ -37,6 +37,8 @@ import registration
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
+import fnmatch
+
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent = None):
 
@@ -156,8 +158,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def openImage(self, file_name):
         self.input_file_name = file_name
-        reader = vtk.vtkNIFTIImageReader()
-        reader.SetFileName(file_name)
+
+        if fnmatch.fnmatch(file_name, '*.nii') or fnmatch.fnmatch(file_name, '*.nii.gz'):
+            reader = vtk.vtkNIFTIImageReader()
+            reader.SetFileName(file_name)
+
+        elif:
+            reader = vtk.vtkNrrdReader()
+            reader.SetFileName(file_name)
+
+        else:
+            return
+        
         reader.Update()
 
         matrix = vtk.vtkMatrix4x4()
