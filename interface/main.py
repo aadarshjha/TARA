@@ -507,7 +507,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.text_arr = ['Fixed Image:', 'Moving Image:', 'Output File:', 'Transform:']
             self.default_arr = ['../data/input/SubjectB_T1.nrrd',
                                 '../data/input/SubjectA_T1.nrrd',
-                                '../data/results/SubjectA2B_Syn.nii.gz',
+                                '../data/results/SubjectA2B_Affine.nii.gz',
                                 'Affine']
 
             for i in range(len(self.text_arr)):
