@@ -12,6 +12,9 @@ Aadarsh Jha, Ashwin Kumar, Terry Luo, Raahul Natarrajan
 <img align = "center" src = "assets/img3.png"/>
 <em><strong>Figure 2:</strong> An example of filtering in TARA.</em>
 
+<img align = "center" src = "assets/img4.png">
+<em><strong>Figure 3:</strong> An example of Gaussian Filtering and Clamping</em>
+
 ## I. Background Information
 
 Imaging has become an essential component in medicine, namely biomedical research and clinical practice. Biomedical researchers and clinicians have a wide variety of medical imaging visualization tools and frameworks such as 3D Slicer, MIPAV, ITK, VTK, FSL, Osiris, etc. In this class, we have learned of Slicer, ITK, and VTK as a method of understanding and analyzing medical images. However, to the layperson, the usage of such tools often requires domain-specific knowledge and understanding of particular medical imaging processes and algorithms. Furthemore, if the task is simply to obtain preliminary quantification of a certain dataset, such tools can be ineffective in their ability to provide quick, seamless, and efficient results. 
