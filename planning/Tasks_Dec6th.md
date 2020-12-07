@@ -8,6 +8,7 @@
 4. Presentation (Done Tomo)
 * Link: [Slides](https://docs.google.com/presentation/d/14Y7sl-ztKXcfgmTO28zULMaf2Z0UB3YwG-Kmv2rxkqQ/edit#slide=id.p)
 5. Evaluation Of Results (Ashwin / Terry)
+6. Educational -- Aadarsh Jha
 
 ## Presentation
 > Google Slides 
